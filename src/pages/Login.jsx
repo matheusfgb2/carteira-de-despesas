@@ -13,16 +13,29 @@ class Login extends React.Component {
 
   handleChangeInput = ({ target }) => {
     const { name, value } = target;
-    this.setState({ [name]: value }, this.handleValidation);
+    this.setState({ [name]: value }, this.loginValidation);
   };
 
-  handleValidation = () => {
+  handleClick = () => {
+    const { saveEmail, history } = this.props;
+    const { email } = this.state;
+
+    saveEmail(email);
+    history.push('./carteira');
+  };
+
+  loginValidation = () => {
     const { email, password } = this.state;
 
     const emailRegex = /^[A-Za-z0-9_!#$%&'*+/=?`{|}~^.-]+@[A-Za-z0-9.-]+$/;
+    const doesEmailHaveDotCom = email.includes('.com');
     const minPasswordLength = 5;
 
-    const validations = [emailRegex.test(email), password.length > minPasswordLength];
+    const validations = [
+      emailRegex.test(email),
+      doesEmailHaveDotCom,
+      password.length > minPasswordLength,
+    ];
     const isValidLogin = validations.every((validation) => validation);
 
     this.setState({ isValidLogin });
@@ -30,11 +43,10 @@ class Login extends React.Component {
 
   render() {
     const { email, password, isValidLogin } = this.state;
-    const { saveEmail, history } = this.props;
     return (
       <div className="login-page">
 
-        <form className="login-form" onSubmit={ () => history.push('./carteira') }>
+        <div className="login-box">
           <h1 className="login-title">Login</h1>
 
           <div className="inputs-container">
@@ -56,14 +68,14 @@ class Login extends React.Component {
             />
           </div>
           <button
-            type="submit"
+            type="button"
             disabled={ !isValidLogin }
-            onClick={ () => saveEmail(email) }
+            onClick={ this.handleClick }
           >
             Entrar
 
           </button>
-        </form>
+        </div>
 
       </div>
     );
