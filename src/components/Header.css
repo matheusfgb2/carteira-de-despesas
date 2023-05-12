@@ -1,5 +1,5 @@
 .header-container {
-  background-color: rgb(61, 193, 140);
+  background-color: white;
   display: flex;
   justify-content: space-around;
   padding: 10px 0;
@@ -12,9 +12,6 @@
   justify-content: space-evenly;
 }
 
-p {
-  color: white;
-  font-family: Lato, sans-serif;
+.user-info-container p {
   font-size: 17px;
-  font-weight: 700;
 }
