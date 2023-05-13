@@ -5,98 +5,132 @@ import thunkCurrencies from '../redux/actions/wallet/thunkCurrencies';
 import './WalletForm.css';
 
 class WalletForm extends Component {
+  state = {
+    description: '',
+    category: 'Alimentação',
+    value: '',
+    payment: 'Dinheiro',
+    currency: '',
+  };
+
   async componentDidMount() {
-    const { fetchCurrencies } = this.props;
+    const { fetchCurrencies, currencies } = this.props;
     await fetchCurrencies();
+
+    this.setState({ currency: currencies[0] });
   }
+
+  handleChangeForm = ({ target }) => {
+    const { name, value } = target;
+    this.setState({ [name]: value });
+  };
 
   render() {
     const { isLoading, currencies, error } = this.props;
+    const { description, value, currency, category, payment } = this.state;
     const paymentMethods = ['Dinheiro', 'Cartão de crédito', 'Cartão de débito'];
-    const tags = ['Alimentação', 'Lazer', 'Trabalho', 'Transporte', 'Saúde'];
+    const categories = ['Alimentação', 'Lazer', 'Trabalho', 'Transporte', 'Saúde'];
 
     if (isLoading) return (<h4 className="loading">Loading...</h4>);
     if (error) return (<h4 className="error-message">{`Erro: ${error}`}</h4>);
 
     return (
-      <form className="wallet-form">
-        <div className="form-container">
+      <div className="wallet-form">
+        <form className="form-container" onSubmit={ () => {} }>
 
-          <h2 className="form-title">Adicionar despesa</h2>
+          <h2 className="form-title">Despesa</h2>
 
           <hr />
 
           <label
             htmlFor="description"
-            className="form-label"
             data-testid="description-input"
           >
             Descrição:
-            <input type="text" name="description" id="description" />
+            <input
+              type="text"
+              name="description"
+              id="description"
+              value={ description }
+              onChange={ this.handleChangeForm }
+            />
           </label>
 
           <label
-            htmlFor="tags"
-            className="form-label"
+            htmlFor="category"
           >
             Categoria:
             <select
-              name="tags"
-              id="tags"
-              defaultValue={ tags[0] }
+              name="category"
+              id="category"
               data-testid="tag-input"
+              value={ category }
+              onChange={ this.handleChangeForm }
             >
-              {tags.map((tag) => (
-                <option key={ tag } value={ tag }>{tag}</option>
+              {categories.map((cat) => (
+                <option key={ cat } value={ cat }>{cat}</option>
               ))}
             </select>
           </label>
 
           <label
             htmlFor="value"
-            className="form-label"
             data-testid="value-input"
           >
             Valor:
-            <input type="text" name="value" id="value" />
+            <input
+              type="number"
+              name="value"
+              id="value"
+              value={ value }
+              onChange={ this.handleChangeForm }
+            />
           </label>
 
           <label
             htmlFor="payment"
-            className="form-label"
           >
             Método de pagamento:
             <select
               name="payment"
               id="payment"
-              defaultValue={ paymentMethods[0] }
               data-testid="method-input"
+              value={ payment }
+              onChange={ this.handleChangeForm }
             >
-              {paymentMethods.map((payment) => (
-                <option key={ payment } value={ payment }>{payment}</option>
+              {paymentMethods.map((paymentMethod) => (
+                <option
+                  key={ paymentMethod }
+                  value={ paymentMethod }
+                >
+                  {paymentMethod}
+
+                </option>
               ))}
             </select>
           </label>
 
           <label
-            htmlFor="currencies"
-            className="form-label"
+            htmlFor="currency"
           >
             Moeda:
             <select
-              name="currencies"
-              id="currencies"
+              name="currency"
+              id="currency"
               data-testid="currency-input"
-              defaultValue={ currencies[0] }
+              value={ currency }
+              onChange={ this.handleChangeForm }
             >
-              {currencies.map((currency) => (
-                <option key={ currency } value={ currency }>{currency}</option>
+              {currencies.map((coin) => (
+                <option key={ coin } value={ coin }>{coin}</option>
               ))}
             </select>
           </label>
 
-        </div>
-      </form>
+          <button type="submit">Adicionar despesa</button>
+
+        </form>
+      </div>
     );
   }
 }

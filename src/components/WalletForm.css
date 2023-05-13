@@ -22,6 +22,26 @@
   margin-left: 5px;
 }
 
-.form-label {
+.form-container label {
   padding: 5px 0;
+}
+
+.form-container button {
+  align-self: center;
+  background-color: rgba(47, 193, 140, 1);
+  border: none;
+  border-radius: 7px;
+  color: white;
+  font-size: 16px;
+  margin-top: 10px;
+  padding: 7px;
+  width: 180px;
+}
+
+.form-container button:hover {
+  cursor: pointer;
+}
+
+.form-container button:active {
+  transform: scale(0.95);
 }
