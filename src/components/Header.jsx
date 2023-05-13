@@ -7,20 +7,20 @@ import './Header.css';
 
 class Header extends Component {
   state = {
-    totalExpense: 0,
     currency: 'BRL',
   };
 
   render() {
-    const { totalExpense, currency } = this.state;
-    const { email } = this.props;
+    const { currency } = this.state;
+    const { email, totalOfExpenses } = this.props;
     return (
       <div className="header-container">
         <img src={ logo } alt="Wallet" className="header-logo" />
         <div className="user-info-container">
           <p data-testid="email-field">{`Email: ${email}`}</p>
-          <p data-testid="total-field">
-            {`Despesa total: ${totalExpense},00 `}
+          <p>
+            Despesa total:
+            <span data-testid="total-field">{totalOfExpenses}</span>
             <span data-testid="header-currency-field">{currency}</span>
           </p>
         </div>
@@ -31,10 +31,12 @@ class Header extends Component {
 
 Header.propTypes = {
   email: PropTypes.string.isRequired,
+  totalOfExpenses: PropTypes.number.isRequired,
 };
 
-const mapStateToProps = ({ user }) => ({
+const mapStateToProps = ({ user, wallet }) => ({
   email: user.email,
+  totalOfExpenses: wallet.totalOfExpenses,
 });
 
 export default connect(mapStateToProps)(Header);

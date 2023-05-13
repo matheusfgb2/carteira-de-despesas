@@ -2,6 +2,9 @@ export const REQUEST_STARTED = 'REQUEST_STARTED';
 export const REQUEST_SUCCESSFUL = 'REQUEST_SUCCESSFUL';
 export const REQUEST_FAILED = 'REQUEST_FAILED';
 
+export const SAVE_EXPENSE = 'SAVE_EXPENSE';
+export const GET_TOTAL_OF_EXPENSES = 'GET_TOTAL_OF_EXPENSES';
+
 const requestStarted = () => ({ type: REQUEST_STARTED });
 
 const requestSuccessful = (currencies) => ({
@@ -14,7 +17,7 @@ const requestFailed = (error) => ({
   payload: error,
 });
 
-export default function thunkCurrencies() {
+export function thunkCurrencies() {
   return async (dispatch) => {
     try {
       dispatch(requestStarted());
@@ -29,3 +32,10 @@ export default function thunkCurrencies() {
     }
   };
 }
+
+export const saveExpense = (expense) => ({
+  type: SAVE_EXPENSE,
+  payload: expense,
+});
+
+export const getTotalOfExpenses = () => ({ type: GET_TOTAL_OF_EXPENSES });

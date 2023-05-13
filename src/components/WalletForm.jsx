@@ -1,42 +1,73 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import thunkCurrencies from '../redux/actions/wallet/thunkCurrencies';
+import {
+  thunkCurrencies,
+  saveExpense,
+  getTotalOfExpenses } from '../redux/actions/wallet';
 import './WalletForm.css';
+import fetchExchangeRates from '../helpers/api';
+
+const paymentMethods = ['Dinheiro', 'Cartão de crédito', 'Cartão de débito'];
+const tags = ['Alimentação', 'Lazer', 'Trabalho', 'Transporte', 'Saúde'];
+
+const defaultPayment = paymentMethods[0];
+const defaultTag = tags[0];
 
 class WalletForm extends Component {
   state = {
     description: '',
-    category: 'Alimentação',
-    value: '',
-    payment: 'Dinheiro',
+    tag: defaultTag,
+    value: 0,
+    method: defaultPayment,
     currency: '',
   };
 
   async componentDidMount() {
-    const { fetchCurrencies, currencies } = this.props;
+    const { fetchCurrencies } = this.props;
     await fetchCurrencies();
-
+    const { currencies } = this.props;
     this.setState({ currency: currencies[0] });
   }
 
   handleChangeForm = ({ target }) => {
     const { name, value } = target;
+    console.log(name, value);
     this.setState({ [name]: value });
+  };
+
+  handleSubmitForm = async (e) => {
+    e.preventDefault();
+    const { saveExpenseToState, expenses, currencies, getTotalExpenses } = this.props;
+    const exchangeRates = await fetchExchangeRates();
+    console.log(this.state);
+    const expense = {
+      id: expenses.length,
+      ...this.state,
+      exchangeRates };
+
+    saveExpenseToState(expense);
+    getTotalExpenses();
+
+    this.setState({
+      description: '',
+      tag: defaultTag,
+      value: '',
+      method: defaultPayment,
+      currency: currencies[0],
+    });
   };
 
   render() {
     const { isLoading, currencies, error } = this.props;
-    const { description, value, currency, category, payment } = this.state;
-    const paymentMethods = ['Dinheiro', 'Cartão de crédito', 'Cartão de débito'];
-    const categories = ['Alimentação', 'Lazer', 'Trabalho', 'Transporte', 'Saúde'];
+    const { description, value, currency, tag, method } = this.state;
 
     if (isLoading) return (<h4 className="loading">Loading...</h4>);
     if (error) return (<h4 className="error-message">{`Erro: ${error}`}</h4>);
 
     return (
       <div className="wallet-form">
-        <form className="form-container" onSubmit={ () => {} }>
+        <form className="form-container" onSubmit={ this.handleSubmitForm }>
 
           <h2 className="form-title">Despesa</h2>
 
@@ -44,58 +75,58 @@ class WalletForm extends Component {
 
           <label
             htmlFor="description"
-            data-testid="description-input"
           >
             Descrição:
             <input
               type="text"
               name="description"
               id="description"
+              data-testid="description-input"
               value={ description }
               onChange={ this.handleChangeForm }
             />
           </label>
 
           <label
-            htmlFor="category"
+            htmlFor="tag"
           >
             Categoria:
             <select
-              name="category"
-              id="category"
+              name="tag"
+              id="tag"
               data-testid="tag-input"
-              value={ category }
+              value={ tag }
               onChange={ this.handleChangeForm }
             >
-              {categories.map((cat) => (
-                <option key={ cat } value={ cat }>{cat}</option>
+              {tags.map((category) => (
+                <option key={ category } value={ category }>{category}</option>
               ))}
             </select>
           </label>
 
           <label
             htmlFor="value"
-            data-testid="value-input"
           >
             Valor:
             <input
               type="number"
               name="value"
               id="value"
+              data-testid="value-input"
               value={ value }
               onChange={ this.handleChangeForm }
             />
           </label>
 
           <label
-            htmlFor="payment"
+            htmlFor="method"
           >
             Método de pagamento:
             <select
-              name="payment"
-              id="payment"
+              name="method"
+              id="method"
               data-testid="method-input"
-              value={ payment }
+              value={ method }
               onChange={ this.handleChangeForm }
             >
               {paymentMethods.map((paymentMethod) => (
@@ -138,18 +169,24 @@ class WalletForm extends Component {
 WalletForm.propTypes = {
   currencies: PropTypes.arrayOf(PropTypes.string).isRequired,
   error: PropTypes.string.isRequired,
+  expenses: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
   fetchCurrencies: PropTypes.func.isRequired,
+  getTotalExpenses: PropTypes.func.isRequired,
   isLoading: PropTypes.bool.isRequired,
+  saveExpenseToState: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = ({ wallet }) => ({
   currencies: wallet.currencies,
   isLoading: wallet.isFetching,
   error: wallet.errorMessage,
+  expenses: wallet.expenses,
 });
 
 const mapDispatchToProps = (dispatch) => ({
   fetchCurrencies: () => dispatch(thunkCurrencies()),
+  saveExpenseToState: (expense) => dispatch(saveExpense(expense)),
+  getTotalExpenses: () => dispatch(getTotalOfExpenses()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(WalletForm);
