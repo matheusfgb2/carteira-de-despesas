@@ -32,7 +32,6 @@ class WalletForm extends Component {
 
   handleChangeForm = ({ target }) => {
     const { name, value } = target;
-    console.log(name, value);
     this.setState({ [name]: value });
   };
 
@@ -40,7 +39,6 @@ class WalletForm extends Component {
     e.preventDefault();
     const { saveExpenseToState, expenses, currencies, getTotalExpenses } = this.props;
     const exchangeRates = await fetchExchangeRates();
-    console.log(this.state);
     const expense = {
       id: expenses.length,
       ...this.state,
