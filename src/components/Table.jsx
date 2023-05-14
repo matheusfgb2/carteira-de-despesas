@@ -4,15 +4,15 @@ import { connect } from 'react-redux';
 import TableElementCard from './TableElementCard';
 import './Table.css';
 
-const tableHeaderContent = ['Descrição', 'Tag', 'Método de pagamento', 'Valor', 'Moeda',
-  'Câmbio utilizado', 'Valor convertido', 'Moeda de conversão', 'Editar/Excluir'];
+const tableHeaderContent = [
+  'Descrição', 'Tag', 'Método de pagamento',
+  'Valor', 'Moeda', 'Câmbio utilizado',
+  'Valor convertido', 'Moeda de conversão', 'Editar/Excluir',
+];
 
 class Table extends Component {
   render() {
     const { expenses } = this.props;
-    const emptyList = expenses.length === 0;
-
-    if (emptyList) return;
 
     return (
       <div className="expenses-table-component">
