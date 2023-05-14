@@ -20,8 +20,8 @@ class Table extends Component {
           <table className="expenses-table">
             <thead>
               <tr>
-                {tableHeaderContent.map((header, index) => (
-                  <th key={ `${index + 1} - ${header}` }>
+                {tableHeaderContent.map((header) => (
+                  <th key={ Math.random() }>
                     {header}
                   </th>
                 ))}
@@ -30,7 +30,7 @@ class Table extends Component {
 
             <tbody>
               {expenses.map((expense) => (
-                <tr key={ `${Math.floor(Math.random() * 100)} - ${expense}` }>
+                <tr key={ Math.random() }>
                   <TableElementCard expense={ expense } />
                 </tr>
               ))}

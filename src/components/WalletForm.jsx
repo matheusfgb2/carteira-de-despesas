@@ -39,8 +39,15 @@ class WalletForm extends Component {
     e.preventDefault();
     const { saveExpenseToState, expenses, currencies, getTotalExpenses } = this.props;
     const exchangeRates = await fetchExchangeRates();
+
+    const higherExpenseId = (
+      expenses.length > 0
+        ? expenses.sort(({ id: idA }, { id: idB }) => idA - idB)[expenses.length - 1].id
+        : null
+    );
+
     const expense = {
-      id: expenses.length,
+      id: higherExpenseId !== null ? higherExpenseId + 1 : 0,
       ...this.state,
       exchangeRates };
 
@@ -97,7 +104,7 @@ class WalletForm extends Component {
               onChange={ this.handleChangeForm }
             >
               {tags.map((category) => (
-                <option key={ category } value={ category }>{category}</option>
+                <option key={ Math.random() } value={ category }>{category}</option>
               ))}
             </select>
           </label>
@@ -129,7 +136,7 @@ class WalletForm extends Component {
             >
               {paymentMethods.map((paymentMethod) => (
                 <option
-                  key={ paymentMethod }
+                  key={ Math.random() }
                   value={ paymentMethod }
                 >
                   {paymentMethod}
@@ -151,7 +158,7 @@ class WalletForm extends Component {
               onChange={ this.handleChangeForm }
             >
               {currencies.map((coin) => (
-                <option key={ coin } value={ coin }>{coin}</option>
+                <option key={ Math.random() } value={ coin }>{coin}</option>
               ))}
             </select>
           </label>
