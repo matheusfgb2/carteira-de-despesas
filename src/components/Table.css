@@ -1,22 +1,41 @@
-.table-content {
-  align-items: center;
+.expenses-table-component {
+  display: flex;
+  justify-content: center;
+}
+
+.expenses-table-div {
   background-color: rgba(255, 255, 255, 0.815);
+  border-radius: 10px;
   display: flex;
   justify-content: center;
+  max-height: 50vh;
+  overflow: auto;
+  width: 80vw;
 }
 
+.expenses-table {
+  border-collapse: collapse;
+  margin: 20px 0;
+}
 
-.remaining-th , .first-th {
-  align-items: center;
-  border-left: 1px solid black;
-  display: flex;
+thead {
+  border-bottom: 1px solid black;
+}
+
+th , td {
   font-size: 15px;
-  height: 38px;
-  justify-content: center;
-  padding: 2px 8px;
-  width: 80px;
+  text-align: center;
+  width: 130px;
 }
 
-.first-th {
-  border-left: none;
+th {
+  border-right: 1px solid black;
+}
+
+th:last-of-type {
+  border-right: none;
+}
+
+tbody tr td {
+  border: 1px solid black;
 }
