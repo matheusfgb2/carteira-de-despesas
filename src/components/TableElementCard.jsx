@@ -6,6 +6,23 @@ import { deleteExpense, getTotalOfExpenses } from '../redux/actions/wallet';
 class TableElementCard extends Component {
   render() {
     const { expense, removeExpense, getTotalExpenses } = this.props;
+
+    if (expense === null) {
+      return (
+        <>
+          <td />
+          <td />
+          <td />
+          <td />
+          <td />
+          <td />
+          <td />
+          <td />
+          <td />
+        </>
+      );
+    }
+
     const { description, tag, method, value, currency, exchangeRates, id } = expense;
 
     const currencyName = exchangeRates[currency].name;
@@ -50,9 +67,13 @@ TableElementCard.propTypes = {
     method: PropTypes.string,
     tag: PropTypes.string,
     value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-  }).isRequired,
+  }),
   getTotalExpenses: PropTypes.func.isRequired,
   removeExpense: PropTypes.func.isRequired,
+};
+
+TableElementCard.defaultProps = {
+  expense: null,
 };
 
 const mapDispatchToProps = (dispatch) => ({

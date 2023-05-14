@@ -24,6 +24,7 @@ thead {
 
 th , td {
   font-size: 15px;
+  height: 55px;
   text-align: center;
   width: 130px;
 }
