@@ -22,7 +22,7 @@
   },
   "scripts": {
     "cy": "env CY_CLI=true cypress run",
-    "cy:open": "cypress open --e2e --browser chrome",
+    "cy:open": "cypress open --e2e --browser firefox",
     "start": "env ESLINT_NO_DEV_ERRORS=true react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",

@@ -1,0 +1,22 @@
+.table-content {
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0.815);
+  display: flex;
+  justify-content: center;
+}
+
+
+.remaining-th , .first-th {
+  align-items: center;
+  border-left: 1px solid black;
+  display: flex;
+  font-size: 15px;
+  height: 38px;
+  justify-content: center;
+  padding: 2px 8px;
+  width: 80px;
+}
+
+.first-th {
+  border-left: none;
+}

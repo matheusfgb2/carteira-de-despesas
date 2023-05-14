@@ -5,14 +5,6 @@ import { renderWithRouterAndRedux } from './helpers/renderWith';
 import App from '../App';
 import mockFetch from '../../cypress/mocks/fetch';
 
-beforeEach(() => {
-  global.fetch = jest.fn(mockFetch);
-});
-
-afterEach(() => {
-  global.fetch.mockClear();
-});
-
 describe('1 - Tela do login', () => {
   it('Verifica se há um input de email, um input de senha e um botão de entrar', () => {
     renderWithRouterAndRedux(<App />);
@@ -44,6 +36,14 @@ describe('1 - Tela do login', () => {
 });
 
 describe('2 - Tela da carteira', () => {
+  beforeEach(() => {
+    global.fetch = jest.fn(mockFetch);
+  });
+
+  afterEach(() => {
+    global.fetch.mockClear();
+  });
+
   it('Verifica se a API da taxa de câmbio é chamada ao carregar a página', async () => {
     renderWithRouterAndRedux(<App />, { initialEntries: ['/carteira'] });
 
