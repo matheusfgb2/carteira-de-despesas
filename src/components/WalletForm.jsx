@@ -7,7 +7,6 @@ import './WalletForm.css';
 
 const paymentMethods = ['Dinheiro', 'Cartão de crédito', 'Cartão de débito'];
 const tags = ['Alimentação', 'Lazer', 'Trabalho', 'Transporte', 'Saúde'];
-
 const defaultPayment = paymentMethods[0];
 const defaultTag = tags[0];
 
@@ -17,8 +16,7 @@ class WalletForm extends Component {
     tag: defaultTag,
     value: 0,
     method: defaultPayment,
-    currency: '',
-  };
+    currency: '' };
 
   async componentDidMount() {
     const { fetchCurrencies } = this.props;
@@ -27,9 +25,21 @@ class WalletForm extends Component {
     this.setState({ currency: currencies[0] });
   }
 
+  componentDidUpdate(prevProps) {
+    const { expenseId, isEditMode, expenses } = this.props;
+    if (isEditMode && !prevProps.isEditMode) {
+      const expense = expenses.find(({ id }) => id === expenseId);
+      this.setState({
+        description: expense.description,
+        tag: expense.tag,
+        value: expense.value,
+        method: expense.method,
+        currency: expense.currency });
+    }
+  }
+
   resetLocalState = () => {
     const { currencies } = this.props;
-
     this.setState({
       description: '',
       tag: defaultTag,
@@ -47,29 +57,20 @@ class WalletForm extends Component {
   handleSubmitForm = (e) => {
     e.preventDefault();
     const { isEditMode } = this.props;
-    if (isEditMode) {
-      this.submitEditedForm();
-    } else {
-      this.submitNewForm();
-    }
+    if (isEditMode) this.submitEditedForm();
+    else this.submitNewForm();
   };
 
   submitNewForm = async () => {
     const { fetchExchangeRates, saveExpenseToState,
       expenses, getTotalExpenses } = this.props;
-
-    const higherExpenseId = (
-      expenses.length > 0
-        ? expenses.sort(({ id: idA }, { id: idB }) => idA - idB)[expenses.length - 1].id
-        : null
-    );
-
     const exchangeRates = await fetchExchangeRates();
+    const higherExpenseId = expenses.length > 0 ? expenses
+      .sort(({ id: idA }, { id: idB }) => idA - idB)[expenses.length - 1].id : null;
     const expense = {
       id: higherExpenseId !== null ? higherExpenseId + 1 : 0,
       ...this.state,
       exchangeRates };
-
     saveExpenseToState([expense]);
     getTotalExpenses();
     this.resetLocalState();
@@ -78,10 +79,17 @@ class WalletForm extends Component {
   submitEditedForm = () => {
     const { expenses, expenseId, removeExpenses,
       saveExpenseToState, getTotalExpenses } = this.props;
+    const { description, tag, value, method, currency } = this.state;
     const expensesCopy = [...expenses];
-    const expense = expensesCopy.find(({ id }) => expenseId === id);
-    Object.assign(expense, { ...expense, ...this.state });
-
+    expensesCopy.map((expense) => {
+      if (expense.id === expenseId) {
+        expense.description = description;
+        expense.tag = tag;
+        expense.value = value;
+        expense.method = method;
+        expense.currency = currency;
+      } return expense;
+    });
     removeExpenses();
     saveExpenseToState(...[expensesCopy]);
     getTotalExpenses();
@@ -91,20 +99,14 @@ class WalletForm extends Component {
   render() {
     const { isLoading, isEditMode, currencies, error } = this.props;
     const { description, value, currency, tag, method } = this.state;
-
     if (isLoading) return (<h4 className="loading">Loading...</h4>);
     if (error) return (<h4 className="error-message">{`Erro: ${error}`}</h4>);
-
     return (
       <div className="wallet-form">
         <form className="form-container" onSubmit={ this.handleSubmitForm }>
           <h2 className="form-title">Despesa</h2>
-
           <hr />
-
-          <label
-            htmlFor="description"
-          >
+          <label htmlFor="description">
             Descrição:
             <input
               type="text"
@@ -115,10 +117,7 @@ class WalletForm extends Component {
               onChange={ this.handleChangeForm }
             />
           </label>
-
-          <label
-            htmlFor="tag"
-          >
+          <label htmlFor="tag">
             Categoria:
             <select
               name="tag"
@@ -128,14 +127,10 @@ class WalletForm extends Component {
               onChange={ this.handleChangeForm }
             >
               {tags.map((category) => (
-                <option key={ Math.random() } value={ category }>{category}</option>
-              ))}
+                <option key={ Math.random() } value={ category }>{category}</option>))}
             </select>
           </label>
-
-          <label
-            htmlFor="value"
-          >
+          <label htmlFor="value">
             Valor:
             <input
               type="number"
@@ -146,10 +141,7 @@ class WalletForm extends Component {
               onChange={ this.handleChangeForm }
             />
           </label>
-
-          <label
-            htmlFor="method"
-          >
+          <label htmlFor="method">
             Método de pagamento:
             <select
               name="method"
@@ -164,15 +156,10 @@ class WalletForm extends Component {
                   value={ paymentMethod }
                 >
                   {paymentMethod}
-
-                </option>
-              ))}
+                </option>))}
             </select>
           </label>
-
-          <label
-            htmlFor="currency"
-          >
+          <label htmlFor="currency">
             Moeda:
             <select
               name="currency"
@@ -182,34 +169,22 @@ class WalletForm extends Component {
               onChange={ this.handleChangeForm }
             >
               {currencies.map((coin) => (
-                <option key={ Math.random() } value={ coin }>{coin}</option>
-              ))}
+                <option key={ Math.random() } value={ coin }>{coin}</option>))}
             </select>
           </label>
-
           {isEditMode ? (
-            <button
-              type="submit"
-              className="form-btn edit"
-            >
+            <button type="submit" className="form-btn edit">
               Editar despesa
-
             </button>
           ) : (
-            <button
-              type="submit"
-              className="form-btn"
-            >
+            <button type="submit" className="form-btn">
               Adicionar despesa
-
-            </button>
-          )}
+            </button>)}
         </form>
       </div>
     );
   }
 }
-
 WalletForm.propTypes = {
   currencies: PropTypes.arrayOf(PropTypes.string).isRequired,
   error: PropTypes.string.isRequired,
@@ -223,7 +198,6 @@ WalletForm.propTypes = {
   removeExpenses: PropTypes.func.isRequired,
   saveExpenseToState: PropTypes.func.isRequired,
 };
-
 const mapStateToProps = ({ wallet }) => ({
   currencies: wallet.currencies,
   isLoading: wallet.isFetchingCur,
@@ -232,7 +206,6 @@ const mapStateToProps = ({ wallet }) => ({
   isEditMode: wallet.editor,
   expenseId: wallet.idToEdit,
 });
-
 const mapDispatchToProps = (dispatch) => ({
   fetchCurrencies: () => dispatch(thunkCurrencies()),
   fetchExchangeRates: () => dispatch(thunkExchangeRates()),
@@ -240,5 +213,4 @@ const mapDispatchToProps = (dispatch) => ({
   removeExpenses: () => dispatch(deleteExpenses()),
   getTotalExpenses: () => dispatch(getTotalOfExpenses()),
 });
-
 export default connect(mapStateToProps, mapDispatchToProps)(WalletForm);

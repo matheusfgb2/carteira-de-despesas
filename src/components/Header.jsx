@@ -6,12 +6,7 @@ import logo from '../assets/logo.png';
 import './Header.css';
 
 class Header extends Component {
-  state = {
-    currency: 'BRL',
-  };
-
   render() {
-    const { currency } = this.state;
     const { email, totalOfExpenses } = this.props;
     return (
       <div className="header-container">
@@ -20,8 +15,8 @@ class Header extends Component {
           <p data-testid="email-field">{`Email: ${email}`}</p>
           <p>
             Despesa total:
-            <span data-testid="total-field">{totalOfExpenses.toFixed(2)}</span>
-            <span data-testid="header-currency-field">{currency}</span>
+            <span data-testid="total-field">{` ${totalOfExpenses.toFixed(2)}`}</span>
+            <span data-testid="header-currency-field"> BRL</span>
           </p>
         </div>
       </div>

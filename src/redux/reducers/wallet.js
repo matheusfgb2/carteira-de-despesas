@@ -47,7 +47,11 @@ const wallet = (state = INITIAL_STATE, action) => {
         : action.payload,
     };
   case EDIT_EXPENSE:
-    return { ...state, idToEdit: action.payload, editor: true };
+    return {
+      ...state,
+      editor: true,
+      idToEdit: action.payload,
+    };
   case DELETE_EXPENSES:
     return {
       ...state,
@@ -55,7 +59,10 @@ const wallet = (state = INITIAL_STATE, action) => {
         state.expenses.filter(({ id }) => id !== action.payload)),
     };
   case GET_TOTAL_OF_EXPENSES:
-    return { ...state, totalOfExpenses: reduceExpenses(state.expenses) };
+    return {
+      ...state,
+      totalOfExpenses: reduceExpenses(state.expenses),
+    };
 
   default:
     return state;
