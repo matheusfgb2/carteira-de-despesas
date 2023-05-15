@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { thunkCurrencies, thunkExchangeRates } from '../redux/actions/thunks';
-import { saveExpense, getTotalOfExpenses } from '../redux/actions';
+import { saveExpense, deleteExpenses, getTotalOfExpenses } from '../redux/actions';
 import './WalletForm.css';
 
 const paymentMethods = ['Dinheiro', 'Cartão de crédito', 'Cartão de débito'];
@@ -27,30 +27,8 @@ class WalletForm extends Component {
     this.setState({ currency: currencies[0] });
   }
 
-  handleChangeForm = ({ target }) => {
-    const { name, value } = target;
-    this.setState({ [name]: value });
-  };
-
-  handleSubmitForm = async (e) => {
-    e.preventDefault();
-    const { fetchExchangeRates, saveExpenseToState, expenses,
-      currencies, getTotalExpenses } = this.props;
-    const exchangeRates = await fetchExchangeRates();
-
-    const higherExpenseId = (
-      expenses.length > 0
-        ? expenses.sort(({ id: idA }, { id: idB }) => idA - idB)[expenses.length - 1].id
-        : null
-    );
-
-    const expense = {
-      id: higherExpenseId !== null ? higherExpenseId + 1 : 0,
-      ...this.state,
-      exchangeRates };
-
-    saveExpenseToState(expense);
-    getTotalExpenses();
+  resetLocalState = () => {
+    const { currencies } = this.props;
 
     this.setState({
       description: '',
@@ -61,8 +39,57 @@ class WalletForm extends Component {
     });
   };
 
+  handleChangeForm = ({ target }) => {
+    const { name, value } = target;
+    this.setState({ [name]: value });
+  };
+
+  handleSubmitForm = (e) => {
+    e.preventDefault();
+    const { isEditMode } = this.props;
+    if (isEditMode) {
+      this.submitEditedForm();
+    } else {
+      this.submitNewForm();
+    }
+  };
+
+  submitNewForm = async () => {
+    const { fetchExchangeRates, saveExpenseToState,
+      expenses, getTotalExpenses } = this.props;
+
+    const higherExpenseId = (
+      expenses.length > 0
+        ? expenses.sort(({ id: idA }, { id: idB }) => idA - idB)[expenses.length - 1].id
+        : null
+    );
+
+    const exchangeRates = await fetchExchangeRates();
+    const expense = {
+      id: higherExpenseId !== null ? higherExpenseId + 1 : 0,
+      ...this.state,
+      exchangeRates };
+
+    saveExpenseToState([expense]);
+    getTotalExpenses();
+    this.resetLocalState();
+  };
+
+  submitEditedForm = () => {
+    const { expenses, expenseId, removeExpenses,
+      saveExpenseToState, getTotalExpenses } = this.props;
+    const expensesCopy = [...expenses];
+    const expense = expensesCopy.find(({ id }) => expenseId === id);
+    Object.assign(expense, { ...expense, ...this.state });
+
+    removeExpenses();
+    saveExpenseToState(...[expensesCopy]);
+    getTotalExpenses();
+    this.resetLocalState();
+  };
+
   render() {
-    const { isLoading, currencies, error } = this.props;
+    const { isLoading, isEditMode, currencies, error } = this.props;
     const { description, value, currency, tag, method } = this.state;
 
     if (isLoading) return (<h4 className="loading">Loading...</h4>);
@@ -71,7 +98,6 @@ class WalletForm extends Component {
     return (
       <div className="wallet-form">
         <form className="form-container" onSubmit={ this.handleSubmitForm }>
-
           <h2 className="form-title">Despesa</h2>
 
           <hr />
@@ -161,8 +187,23 @@ class WalletForm extends Component {
             </select>
           </label>
 
-          <button type="submit">Adicionar despesa</button>
+          {isEditMode ? (
+            <button
+              type="submit"
+              className="form-btn edit"
+            >
+              Editar despesa
 
+            </button>
+          ) : (
+            <button
+              type="submit"
+              className="form-btn"
+            >
+              Adicionar despesa
+
+            </button>
+          )}
         </form>
       </div>
     );
@@ -172,11 +213,14 @@ class WalletForm extends Component {
 WalletForm.propTypes = {
   currencies: PropTypes.arrayOf(PropTypes.string).isRequired,
   error: PropTypes.string.isRequired,
+  expenseId: PropTypes.number.isRequired,
   expenses: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
   fetchCurrencies: PropTypes.func.isRequired,
   fetchExchangeRates: PropTypes.func.isRequired,
   getTotalExpenses: PropTypes.func.isRequired,
+  isEditMode: PropTypes.bool.isRequired,
   isLoading: PropTypes.bool.isRequired,
+  removeExpenses: PropTypes.func.isRequired,
   saveExpenseToState: PropTypes.func.isRequired,
 };
 
@@ -185,12 +229,15 @@ const mapStateToProps = ({ wallet }) => ({
   isLoading: wallet.isFetchingCur,
   error: wallet.errorMessage,
   expenses: wallet.expenses,
+  isEditMode: wallet.editor,
+  expenseId: wallet.idToEdit,
 });
 
 const mapDispatchToProps = (dispatch) => ({
   fetchCurrencies: () => dispatch(thunkCurrencies()),
   fetchExchangeRates: () => dispatch(thunkExchangeRates()),
   saveExpenseToState: (expense) => dispatch(saveExpense(expense)),
+  removeExpenses: () => dispatch(deleteExpenses()),
   getTotalExpenses: () => dispatch(getTotalOfExpenses()),
 });
 

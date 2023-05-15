@@ -1,4 +1,5 @@
-import { SAVE_EXPENSE, GET_TOTAL_OF_EXPENSES, DELETE_EXPENSE } from '../actions';
+import { SAVE_EXPENSE, EDIT_EXPENSE,
+  GET_TOTAL_OF_EXPENSES, DELETE_EXPENSES } from '../actions';
 import {
   CUR_REQUEST_STARTED,
   CUR_REQUEST_SUCCESSFUL,
@@ -41,13 +42,17 @@ const wallet = (state = INITIAL_STATE, action) => {
   case SAVE_EXPENSE:
     return {
       ...state,
-      expenses: (state.expenses.length > 0) ? [...state.expenses, action.payload]
-        : [action.payload],
+      editor: false,
+      expenses: (state.expenses.length > 0) ? [...state.expenses, ...action.payload]
+        : action.payload,
     };
-  case DELETE_EXPENSE:
+  case EDIT_EXPENSE:
+    return { ...state, idToEdit: action.payload, editor: true };
+  case DELETE_EXPENSES:
     return {
       ...state,
-      expenses: state.expenses.filter(({ id }) => id !== action.payload),
+      expenses: action.payload === '' ? [] : (
+        state.expenses.filter(({ id }) => id !== action.payload)),
     };
   case GET_TOTAL_OF_EXPENSES:
     return { ...state, totalOfExpenses: reduceExpenses(state.expenses) };

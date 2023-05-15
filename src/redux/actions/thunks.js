@@ -1,12 +1,8 @@
+// thunkCurrencies
 export const CUR_REQUEST_STARTED = 'CUR_REQUEST_STARTED';
 export const CUR_REQUEST_SUCCESSFUL = 'CUR_REQUEST_SUCCESSFUL';
 export const CUR_REQUEST_FAILED = 'CUR_REQUEST_FAILED';
 
-export const E_R_REQUEST_STARTED = 'E_R_REQUEST_STARTED';
-export const E_R_REQUEST_SUCCESSFUL = 'E_R_REQUEST_SUCCESSFUL';
-export const E_R_REQUEST_FAILED = 'E_R_REQUEST_FAILED';
-
-// thunkCurrencies
 const curRequestStarted = () => ({
   type: CUR_REQUEST_STARTED,
 });
@@ -35,6 +31,10 @@ export function thunkCurrencies() {
 }
 
 // thunkExchangeRates
+export const E_R_REQUEST_STARTED = 'E_R_REQUEST_STARTED';
+export const E_R_REQUEST_SUCCESSFUL = 'E_R_REQUEST_SUCCESSFUL';
+export const E_R_REQUEST_FAILED = 'E_R_REQUEST_FAILED';
+
 const eRRequestStarted = () => ({
   type: E_R_REQUEST_STARTED,
 });

@@ -8,7 +8,8 @@ export const getEmail = (email) => ({
 
 // wallet actions
 export const SAVE_EXPENSE = 'SAVE_EXPENSE';
-export const DELETE_EXPENSE = 'DELETE_EXPENSE';
+export const EDIT_EXPENSE = 'EDIT_EXPENSE';
+export const DELETE_EXPENSES = 'DELETE_EXPENSES';
 export const GET_TOTAL_OF_EXPENSES = 'GET_TOTAL_OF_EXPENSES';
 
 export const saveExpense = (expense) => ({
@@ -16,8 +17,13 @@ export const saveExpense = (expense) => ({
   payload: expense,
 });
 
-export const deleteExpense = (expenseId) => ({
-  type: DELETE_EXPENSE,
+export const editExpense = (expenseId) => ({
+  type: EDIT_EXPENSE,
+  payload: expenseId,
+});
+
+export const deleteExpenses = (expenseId = '') => ({
+  type: DELETE_EXPENSES,
   payload: expenseId,
 });
 

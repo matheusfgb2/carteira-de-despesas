@@ -1,11 +1,11 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { deleteExpense, getTotalOfExpenses } from '../redux/actions';
+import { editExpense, deleteExpenses, getTotalOfExpenses } from '../redux/actions';
 
 class TableElementCard extends Component {
   render() {
-    const { expense, removeExpense, getTotalExpenses } = this.props;
+    const { expense, reviseExpense, removeExpense, getTotalExpenses } = this.props;
 
     if (expense === null) {
       return (
@@ -41,6 +41,16 @@ class TableElementCard extends Component {
         <td>{convertedValue}</td>
         <td>Real</td>
         <td>
+
+          <button
+            type="button"
+            data-testid="edit-btn"
+            onClick={ () => { reviseExpense(id); getTotalExpenses(); } }
+          >
+            Editar
+
+          </button>
+
           <button
             type="button"
             data-testid="delete-btn"
@@ -49,6 +59,7 @@ class TableElementCard extends Component {
             Excluir
 
           </button>
+
         </td>
       </>
     );
@@ -70,6 +81,7 @@ TableElementCard.propTypes = {
   }),
   getTotalExpenses: PropTypes.func.isRequired,
   removeExpense: PropTypes.func.isRequired,
+  reviseExpense: PropTypes.func.isRequired,
 };
 
 TableElementCard.defaultProps = {
@@ -77,7 +89,8 @@ TableElementCard.defaultProps = {
 };
 
 const mapDispatchToProps = (dispatch) => ({
-  removeExpense: (expenseId) => dispatch(deleteExpense(expenseId)),
+  reviseExpense: (expenseId) => dispatch(editExpense(expenseId)),
+  removeExpense: (expenseId) => dispatch(deleteExpenses(expenseId)),
   getTotalExpenses: () => dispatch(getTotalOfExpenses()),
 });
 
