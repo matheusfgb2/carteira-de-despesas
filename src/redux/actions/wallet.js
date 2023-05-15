@@ -1,5 +1,6 @@
 export const REQUEST_STARTED = 'REQUEST_STARTED';
-export const REQUEST_SUCCESSFUL = 'REQUEST_SUCCESSFUL';
+export const CURRENCIES_REQUEST_SUCCESSFUL = 'CURRENCIES_REQUEST_SUCCESSFUL';
+export const EXCHANGE_RATES_REQUEST_SUCCESSFUL = 'EXCHANGE_RATES_REQUEST_SUCCESSFUL';
 export const REQUEST_FAILED = 'REQUEST_FAILED';
 
 export const SAVE_EXPENSE = 'SAVE_EXPENSE';
@@ -7,25 +8,33 @@ export const DELETE_EXPENSE = 'DELETE_EXPENSE';
 export const GET_TOTAL_OF_EXPENSES = 'GET_TOTAL_OF_EXPENSES';
 
 const requestStarted = () => ({ type: REQUEST_STARTED });
-const requestSuccessful = (currencies) => ({
-  type: REQUEST_SUCCESSFUL,
+const currenciesRequestSuccessful = (currencies) => ({
+  type: CURRENCIES_REQUEST_SUCCESSFUL,
   payload: currencies,
+});
+const exchangeRatesRequestSuccessful = () => ({
+  type: EXCHANGE_RATES_REQUEST_SUCCESSFUL,
 });
 const requestFailed = (error) => ({
   type: REQUEST_FAILED,
   payload: error,
 });
 
-export function thunkCurrencies() {
+export function thunkCurrenciesAndExchangeRates(saveCurrenciesArray = false) {
   return async (dispatch) => {
     try {
       dispatch(requestStarted());
       const API_URL = 'https://economia.awesomeapi.com.br/json/all';
       const request = await fetch(API_URL);
       const data = await request.json();
-      const currencies = Object.keys(data).filter((currency) => currency !== 'USDT');
 
-      dispatch(requestSuccessful(currencies));
+      if (saveCurrenciesArray) {
+        const currencies = Object.keys(data).filter((currency) => currency !== 'USDT');
+        dispatch(currenciesRequestSuccessful(currencies));
+      } else {
+        dispatch(exchangeRatesRequestSuccessful());
+        return data;
+      }
     } catch (error) {
       dispatch(requestFailed(error.message));
     }

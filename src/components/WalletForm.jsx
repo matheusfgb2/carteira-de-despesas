@@ -1,12 +1,12 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+
 import {
-  thunkCurrencies,
+  thunkCurrenciesAndExchangeRates,
   saveExpense,
   getTotalOfExpenses } from '../redux/actions/wallet';
 import './WalletForm.css';
-import fetchExchangeRates from '../helpers/api';
 
 const paymentMethods = ['Dinheiro', 'Cartão de crédito', 'Cartão de débito'];
 const tags = ['Alimentação', 'Lazer', 'Trabalho', 'Transporte', 'Saúde'];
@@ -24,8 +24,9 @@ class WalletForm extends Component {
   };
 
   async componentDidMount() {
-    const { fetchCurrencies } = this.props;
-    await fetchCurrencies();
+    const { fetchCurrenciesAndExchangeRates } = this.props;
+    const saveCurrenciesArray = true;
+    await fetchCurrenciesAndExchangeRates(saveCurrenciesArray);
     const { currencies } = this.props;
     this.setState({ currency: currencies[0] });
   }
@@ -37,8 +38,9 @@ class WalletForm extends Component {
 
   handleSubmitForm = async (e) => {
     e.preventDefault();
-    const { saveExpenseToState, expenses, currencies, getTotalExpenses } = this.props;
-    const exchangeRates = await fetchExchangeRates();
+    const { fetchCurrenciesAndExchangeRates, saveExpenseToState, expenses,
+      currencies, getTotalExpenses } = this.props;
+    const exchangeRates = await fetchCurrenciesAndExchangeRates();
 
     const higherExpenseId = (
       expenses.length > 0
@@ -175,7 +177,7 @@ WalletForm.propTypes = {
   currencies: PropTypes.arrayOf(PropTypes.string).isRequired,
   error: PropTypes.string.isRequired,
   expenses: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
-  fetchCurrencies: PropTypes.func.isRequired,
+  fetchCurrenciesAndExchangeRates: PropTypes.func.isRequired,
   getTotalExpenses: PropTypes.func.isRequired,
   isLoading: PropTypes.bool.isRequired,
   saveExpenseToState: PropTypes.func.isRequired,
@@ -189,7 +191,9 @@ const mapStateToProps = ({ wallet }) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  fetchCurrencies: () => dispatch(thunkCurrencies()),
+  fetchCurrenciesAndExchangeRates: (doSaveAnArray) => (
+    dispatch(thunkCurrenciesAndExchangeRates(doSaveAnArray))
+  ),
   saveExpenseToState: (expense) => dispatch(saveExpense(expense)),
   getTotalExpenses: () => dispatch(getTotalOfExpenses()),
 });

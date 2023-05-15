@@ -1,9 +1,11 @@
-import reduceExpenses from '../../helpers/reduceExpenses';
+import { reduceExpenses } from '../../helpers';
 
 import {
   REQUEST_STARTED,
-  REQUEST_SUCCESSFUL,
+  EXCHANGE_RATES_REQUEST_SUCCESSFUL,
+  CURRENCIES_REQUEST_SUCCESSFUL,
   REQUEST_FAILED,
+
   SAVE_EXPENSE,
   GET_TOTAL_OF_EXPENSES,
   DELETE_EXPENSE,
@@ -22,11 +24,10 @@ const INITIAL_STATE = {
 const wallet = (state = INITIAL_STATE, action) => {
   switch (action.type) {
   case REQUEST_STARTED:
-    return {
-      ...state,
-      isFetching: true,
-    };
-  case REQUEST_SUCCESSFUL:
+    return { ...state, isFetching: true };
+  case EXCHANGE_RATES_REQUEST_SUCCESSFUL:
+    return { ...state, isFetching: false };
+  case CURRENCIES_REQUEST_SUCCESSFUL:
     return {
       ...state,
       isFetching: false,
@@ -38,28 +39,19 @@ const wallet = (state = INITIAL_STATE, action) => {
       isFetching: false,
       errorMessage: action.payload.message,
     };
-
   case SAVE_EXPENSE:
     return {
       ...state,
-      expenses: (
-        state.expenses.length > 0 ? (
-          [...state.expenses, action.payload]
-        ) : [action.payload]
-      ),
+      expenses: (state.expenses.length > 0) ? [...state.expenses, action.payload]
+        : [action.payload],
     };
   case DELETE_EXPENSE:
     return {
       ...state,
-      expenses: (
-        state.expenses.filter(({ id }) => id !== action.payload)
-      ),
+      expenses: state.expenses.filter(({ id }) => id !== action.payload),
     };
   case GET_TOTAL_OF_EXPENSES:
-    return {
-      ...state,
-      totalOfExpenses: reduceExpenses(state.expenses),
-    };
+    return { ...state, totalOfExpenses: reduceExpenses(state.expenses) };
   default:
     return state;
   }

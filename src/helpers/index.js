@@ -1,4 +1,4 @@
-export default function reduceExpenses(expenses) {
+export function reduceExpenses(expenses) {
   return expenses.reduce((total, expense) => {
     const { currency } = expense;
     const rating = expense.exchangeRates[currency].ask;
