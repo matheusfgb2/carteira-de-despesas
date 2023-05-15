@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { deleteExpense, getTotalOfExpenses } from '../redux/actions/wallet';
+import { deleteExpense, getTotalOfExpenses } from '../redux/actions';
 
 class TableElementCard extends Component {
   render() {

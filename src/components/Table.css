@@ -13,6 +13,10 @@
   width: 80vw;
 }
 
+.loading {
+  text-align: center;
+}
+
 .expenses-table {
   border-collapse: collapse;
   margin: 20px 0;

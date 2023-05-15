@@ -27,33 +27,34 @@ class Table extends Component {
   // };
 
   render() {
-    const { expenses } = this.props;
+    const { expenses, isLoading } = this.props;
     // const expensesWithEmptyElements = this.getExpensesWithEmptyElements();
-
     return (
       <div className="expenses-table-component">
         <div className="expenses-table-div">
-          <table className="expenses-table">
-            <thead>
-              <tr>
-                {tableHeaderContent.map((header) => (
-                  <th key={ Math.random() }>
-                    {header}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-
-            <tbody>
-
-              {expenses.map((expense) => (
-                <tr key={ Math.random() }>
-                  <TableElementCard expense={ expense } />
+          {isLoading ? <h2 className="loading">Loading...</h2> : (
+            <table className="expenses-table">
+              <thead>
+                <tr>
+                  {tableHeaderContent.map((header) => (
+                    <th key={ Math.random() }>
+                      {header}
+                    </th>
+                  ))}
                 </tr>
-              ))}
+              </thead>
 
-            </tbody>
-          </table>
+              <tbody>
+
+                {expenses.map((expense) => (
+                  <tr key={ Math.random() }>
+                    <TableElementCard expense={ expense } />
+                  </tr>
+                ))}
+
+              </tbody>
+            </table>
+          )}
         </div>
       </div>
     );
@@ -62,10 +63,12 @@ class Table extends Component {
 
 Table.propTypes = {
   expenses: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
+  isLoading: PropTypes.bool.isRequired,
 };
 
 const mapStateToProps = ({ wallet }) => ({
   expenses: wallet.expenses,
+  isLoading: wallet.isFetchingER,
 });
 
 export default connect(mapStateToProps)(Table);

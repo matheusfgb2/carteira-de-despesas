@@ -1,11 +1,8 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-
-import {
-  thunkCurrenciesAndExchangeRates,
-  saveExpense,
-  getTotalOfExpenses } from '../redux/actions/wallet';
+import { thunkCurrencies, thunkExchangeRates } from '../redux/actions/thunks';
+import { saveExpense, getTotalOfExpenses } from '../redux/actions';
 import './WalletForm.css';
 
 const paymentMethods = ['Dinheiro', 'Cartão de crédito', 'Cartão de débito'];
@@ -24,9 +21,8 @@ class WalletForm extends Component {
   };
 
   async componentDidMount() {
-    const { fetchCurrenciesAndExchangeRates } = this.props;
-    const saveCurrenciesArray = true;
-    await fetchCurrenciesAndExchangeRates(saveCurrenciesArray);
+    const { fetchCurrencies } = this.props;
+    await fetchCurrencies();
     const { currencies } = this.props;
     this.setState({ currency: currencies[0] });
   }
@@ -38,9 +34,9 @@ class WalletForm extends Component {
 
   handleSubmitForm = async (e) => {
     e.preventDefault();
-    const { fetchCurrenciesAndExchangeRates, saveExpenseToState, expenses,
+    const { fetchExchangeRates, saveExpenseToState, expenses,
       currencies, getTotalExpenses } = this.props;
-    const exchangeRates = await fetchCurrenciesAndExchangeRates();
+    const exchangeRates = await fetchExchangeRates();
 
     const higherExpenseId = (
       expenses.length > 0
@@ -177,7 +173,8 @@ WalletForm.propTypes = {
   currencies: PropTypes.arrayOf(PropTypes.string).isRequired,
   error: PropTypes.string.isRequired,
   expenses: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
-  fetchCurrenciesAndExchangeRates: PropTypes.func.isRequired,
+  fetchCurrencies: PropTypes.func.isRequired,
+  fetchExchangeRates: PropTypes.func.isRequired,
   getTotalExpenses: PropTypes.func.isRequired,
   isLoading: PropTypes.bool.isRequired,
   saveExpenseToState: PropTypes.func.isRequired,
@@ -185,15 +182,14 @@ WalletForm.propTypes = {
 
 const mapStateToProps = ({ wallet }) => ({
   currencies: wallet.currencies,
-  isLoading: wallet.isFetching,
+  isLoading: wallet.isFetchingCur,
   error: wallet.errorMessage,
   expenses: wallet.expenses,
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  fetchCurrenciesAndExchangeRates: (doSaveAnArray) => (
-    dispatch(thunkCurrenciesAndExchangeRates(doSaveAnArray))
-  ),
+  fetchCurrencies: () => dispatch(thunkCurrencies()),
+  fetchExchangeRates: () => dispatch(thunkExchangeRates()),
   saveExpenseToState: (expense) => dispatch(saveExpense(expense)),
   getTotalExpenses: () => dispatch(getTotalOfExpenses()),
 });

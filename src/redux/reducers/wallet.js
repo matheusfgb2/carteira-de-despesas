@@ -1,15 +1,15 @@
-import { reduceExpenses } from '../../helpers';
-
+import { SAVE_EXPENSE, GET_TOTAL_OF_EXPENSES, DELETE_EXPENSE } from '../actions';
 import {
-  REQUEST_STARTED,
-  EXCHANGE_RATES_REQUEST_SUCCESSFUL,
-  CURRENCIES_REQUEST_SUCCESSFUL,
-  REQUEST_FAILED,
+  CUR_REQUEST_STARTED,
+  CUR_REQUEST_SUCCESSFUL,
+  CUR_REQUEST_FAILED,
 
-  SAVE_EXPENSE,
-  GET_TOTAL_OF_EXPENSES,
-  DELETE_EXPENSE,
-} from '../actions/wallet';
+  E_R_REQUEST_STARTED,
+  E_R_REQUEST_SUCCESSFUL,
+  E_R_REQUEST_FAILED,
+} from '../actions/thunks';
+
+import { reduceExpenses } from '../../helpers';
 
 const INITIAL_STATE = {
   currencies: [],
@@ -17,28 +17,27 @@ const INITIAL_STATE = {
   totalOfExpenses: 0,
   editor: false,
   idToEdit: 0,
-  isFetching: false,
+  isFetchingCur: false,
+  isFetchingER: false,
   errorMessage: '',
 };
 
 const wallet = (state = INITIAL_STATE, action) => {
   switch (action.type) {
-  case REQUEST_STARTED:
-    return { ...state, isFetching: true };
-  case EXCHANGE_RATES_REQUEST_SUCCESSFUL:
-    return { ...state, isFetching: false };
-  case CURRENCIES_REQUEST_SUCCESSFUL:
-    return {
-      ...state,
-      isFetching: false,
-      currencies: action.payload,
-    };
-  case REQUEST_FAILED:
-    return {
-      ...state,
-      isFetching: false,
-      errorMessage: action.payload.message,
-    };
+  case CUR_REQUEST_STARTED:
+    return { ...state, isFetchingCur: true };
+  case CUR_REQUEST_SUCCESSFUL:
+    return { ...state, isFetchingCur: false, currencies: action.payload };
+  case CUR_REQUEST_FAILED:
+    return { ...state, isFetchingCur: false, errorMessage: action.payload.message };
+
+  case E_R_REQUEST_STARTED:
+    return { ...state, isFetchingER: true };
+  case E_R_REQUEST_SUCCESSFUL:
+    return { ...state, isFetchingER: false };
+  case E_R_REQUEST_FAILED:
+    return { ...state, isFetchingER: false, errorMessage: action.payload.message };
+
   case SAVE_EXPENSE:
     return {
       ...state,
@@ -52,6 +51,7 @@ const wallet = (state = INITIAL_STATE, action) => {
     };
   case GET_TOTAL_OF_EXPENSES:
     return { ...state, totalOfExpenses: reduceExpenses(state.expenses) };
+
   default:
     return state;
   }
