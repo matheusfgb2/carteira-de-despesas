@@ -33,7 +33,7 @@ class Wallet extends React.Component {
 }
 
 Wallet.propTypes = {
-  error: PropTypes.bool.isRequired,
+  error: PropTypes.string.isRequired,
 };
 
 const mapStateToProps = ({ wallet }) => ({

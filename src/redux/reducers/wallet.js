@@ -1,19 +1,13 @@
 import {
-  SAVE_EXPENSES, EDIT_EXPENSE,
-  GET_TOTAL_OF_EXPENSES, DELETE_EXPENSE,
+  SAVE_EXPENSES, EDIT_EXPENSE, DELETE_EXPENSE, GET_TOTAL_OF_EXPENSES,
 } from '../actions';
 
 import {
-  CUR_REQUEST_STARTED,
-  CUR_REQUEST_SUCCESSFUL,
-  CUR_REQUEST_FAILED,
-
-  E_R_REQUEST_STARTED,
-  E_R_REQUEST_SUCCESSFUL,
-  E_R_REQUEST_FAILED,
+  REQUEST_STARTED,
+  CURRENCIES_SUCCESSFUL,
+  REQUEST_FAILED,
+  EXPENSE_SUCCESSFUL,
 } from '../actions/thunks';
-
-import { reduceExpenses } from '../../helpers';
 
 const INITIAL_STATE = {
   currencies: [],
@@ -21,27 +15,39 @@ const INITIAL_STATE = {
   totalOfExpenses: 0,
   editor: false,
   idToEdit: 0,
-  isFetchingCur: false,
-  isFetchingER: false,
+  isFetching: false,
   errorMessage: '',
 };
 
 const wallet = (state = INITIAL_STATE, action) => {
   switch (action.type) {
-  case CUR_REQUEST_STARTED:
-    return { ...state, isFetchingCur: true };
-  case CUR_REQUEST_SUCCESSFUL:
-    return { ...state, isFetchingCur: false, currencies: action.payload };
-  case CUR_REQUEST_FAILED:
-    return { ...state, isFetchingCur: false, errorMessage: action.payload };
+  case REQUEST_STARTED:
+    return { ...state, isFetching: true };
+  case CURRENCIES_SUCCESSFUL:
+    return {
+      ...state,
+      isFetching: false,
+      currencies: action.payload,
+    };
+  case EXPENSE_SUCCESSFUL:
+    return {
+      ...state,
+      isFetching: false,
+      expenses: [...state.expenses, action.payload],
+    };
+  case REQUEST_FAILED:
+    return { ...state, isFetching: false, errorMessage: action.payload };
 
-  case E_R_REQUEST_STARTED:
-    return { ...state, isFetchingER: true };
-  case E_R_REQUEST_SUCCESSFUL:
-    return { ...state, isFetchingER: false };
-  case E_R_REQUEST_FAILED:
-    return { ...state, isFetchingER: false, errorMessage: action.payload };
-
+  case GET_TOTAL_OF_EXPENSES:
+    return {
+      ...state,
+      totalOfExpenses: state.expenses.reduce((total, expense) => {
+        const { currency } = expense;
+        const rating = expense.exchangeRates[currency].ask;
+        const finalValue = Number(rating) * Number(expense.value);
+        return total + finalValue;
+      }, 0),
+    };
   case SAVE_EXPENSES:
     return {
       ...state,
@@ -58,11 +64,6 @@ const wallet = (state = INITIAL_STATE, action) => {
     return {
       ...state,
       expenses: action.payload,
-    };
-  case GET_TOTAL_OF_EXPENSES:
-    return {
-      ...state,
-      totalOfExpenses: reduceExpenses(state.expenses),
     };
 
   default:

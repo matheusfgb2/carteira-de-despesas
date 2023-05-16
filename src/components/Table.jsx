@@ -47,7 +47,7 @@ Table.propTypes = {
 
 const mapStateToProps = ({ wallet }) => ({
   expenses: wallet.expenses,
-  isLoading: wallet.isFetchingER,
+  isLoading: wallet.isFetching,
 });
 
 export default connect(mapStateToProps)(Table);

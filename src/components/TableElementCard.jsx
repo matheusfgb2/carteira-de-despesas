@@ -7,20 +7,22 @@ class TableElementCard extends Component {
   handleClickToRemove = (expenseId) => {
     const { expenses, removeExpense } = this.props;
     const filteredExpenses = expenses.filter(({ id }) => id !== expenseId);
-    // Update expenses id
+    // Update expenses ids
     // filteredExpenses.forEach((expense, index) => {
     //   expense.id = index;
     // });
     removeExpense(filteredExpenses);
   };
+  // YOUID
 
   render() {
-    const { expense, reviseExpense, getTotalExpenses } = this.props;
+    const { expense, reviseExpense } = this.props;
     const { description, tag, method, value, currency, exchangeRates, id } = expense;
     const currencyName = exchangeRates[currency].name;
-    const fixedValue = Number(value).toFixed(2);
     const currencyRate = Number(exchangeRates[currency].ask);
     const convertedValue = (value * currencyRate).toFixed(2);
+    const fixedCurRate = currencyRate.toFixed(2);
+    const fixedValue = Number(value).toFixed(2);
 
     return (
       <>
@@ -29,7 +31,7 @@ class TableElementCard extends Component {
         <td>{method}</td>
         <td>{fixedValue}</td>
         <td>{currencyName}</td>
-        <td>{currencyRate.toFixed(2)}</td>
+        <td>{fixedCurRate}</td>
         <td>{convertedValue}</td>
         <td>Real</td>
         <td>
@@ -72,7 +74,6 @@ TableElementCard.propTypes = {
     value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   }).isRequired,
   expenses: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
-  getTotalExpenses: PropTypes.func.isRequired,
   removeExpense: PropTypes.func.isRequired,
   reviseExpense: PropTypes.func.isRequired,
 };

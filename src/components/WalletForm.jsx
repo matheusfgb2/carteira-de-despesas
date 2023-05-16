@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { thunkCurrencies, thunkExchangeRates } from '../redux/actions/thunks';
+import { thunkCurrenciesAndAddExpense } from '../redux/actions/thunks';
 import { saveExpenses, getTotalOfExpenses } from '../redux/actions';
 import './WalletForm.css';
 
@@ -9,22 +9,21 @@ const paymentMethods = ['Dinheiro', 'Cartão de crédito', 'Cartão de débito']
 const tags = ['Alimentação', 'Lazer', 'Trabalho', 'Transporte', 'Saúde'];
 const defaultPayment = paymentMethods[0];
 const defaultTag = tags[0];
+const defaultCurrency = 'USD';
 
 class WalletForm extends Component {
   state = {
+    id: 0,
     description: '',
     tag: defaultTag,
     value: '',
     method: defaultPayment,
-    currency: '',
+    currency: defaultCurrency,
   };
 
   async componentDidMount() {
-    const { fetchCurrencies } = this.props;
-
-    await fetchCurrencies();
-    const { currencies } = this.props;
-    this.setState({ currency: currencies[0] });
+    const { fetchCurrenciesAndAddExpense } = this.props;
+    await fetchCurrenciesAndAddExpense();
   }
 
   componentDidUpdate(prevProps) {
@@ -38,21 +37,21 @@ class WalletForm extends Component {
     }
   }
 
-  resetLocalState = () => {
-    const { currencies } = this.props;
-
-    this.setState({
+  resetLocalState = (editMode = false) => {
+    this.setState((prevState) => ({
+      id: editMode ? prevState.id : prevState.id + 1,
       description: '',
       tag: defaultTag,
       value: '',
       method: defaultPayment,
-      currency: currencies[0],
-    });
+      currency: defaultCurrency,
+    }));
   };
 
   handleChangeForm = ({ target }) => {
     const { name, value } = target;
     this.setState({ [name]: value });
+    console.log(this.state);
   };
 
   handleSubmitForm = async (e) => {
@@ -70,16 +69,13 @@ class WalletForm extends Component {
         ...updatedExpenses[expenseId],
         ...this.state,
       };
+      saveExpensesToState(updatedExpenses);
     } else {
-      const { fetchExchangeRates } = this.props;
-
-      const exchangeRates = await fetchExchangeRates();
-      const expense = { id: expenses.length, ...this.state, exchangeRates };
-      updatedExpenses = [...expenses, expense];
+      const { fetchCurrenciesAndAddExpense } = this.props;
+      await fetchCurrenciesAndAddExpense(this.state);
     }
-    saveExpensesToState(updatedExpenses);
     getTotalExpenses();
-    this.resetLocalState();
+    this.resetLocalState(isEditMode);
   };
 
   render() {
@@ -178,14 +174,11 @@ WalletForm.propTypes = {
   expenses: PropTypes.arrayOf(PropTypes.shape({
     description: PropTypes.string,
     tag: PropTypes.string,
-    value: PropTypes.oneOfType([
-      PropTypes.string,
-      PropTypes.number,
-    ]),
+    value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     method: PropTypes.string,
-    currency: PropTypes.string })).isRequired,
-  fetchCurrencies: PropTypes.func.isRequired,
-  fetchExchangeRates: PropTypes.func.isRequired,
+    currency: PropTypes.string,
+  })).isRequired,
+  fetchCurrenciesAndAddExpense: PropTypes.func.isRequired,
   getTotalExpenses: PropTypes.func.isRequired,
   isEditMode: PropTypes.bool.isRequired,
   isLoading: PropTypes.bool.isRequired,
@@ -194,15 +187,16 @@ WalletForm.propTypes = {
 
 const mapStateToProps = ({ wallet }) => ({
   currencies: wallet.currencies,
-  isLoading: wallet.isFetchingCur,
+  isLoading: wallet.isFetching,
   expenses: wallet.expenses,
   isEditMode: wallet.editor,
   expenseId: wallet.idToEdit,
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  fetchCurrencies: () => dispatch(thunkCurrencies()),
-  fetchExchangeRates: () => dispatch(thunkExchangeRates()),
+  fetchCurrenciesAndAddExpense: (stateData) => {
+    dispatch(thunkCurrenciesAndAddExpense(stateData));
+  },
   saveExpensesToState: (expense) => dispatch(saveExpenses(expense)),
   getTotalExpenses: () => dispatch(getTotalOfExpenses()),
 });
