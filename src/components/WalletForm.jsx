@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { thunkCurrencies, thunkExchangeRates } from '../redux/actions/thunks';
-import { saveExpense, deleteExpenses, getTotalOfExpenses } from '../redux/actions';
+import { saveExpenses, getTotalOfExpenses } from '../redux/actions';
 import './WalletForm.css';
 
 const paymentMethods = ['Dinheiro', 'Cartão de crédito', 'Cartão de débito'];
@@ -14,12 +14,14 @@ class WalletForm extends Component {
   state = {
     description: '',
     tag: defaultTag,
-    value: 0,
+    value: '',
     method: defaultPayment,
-    currency: '' };
+    currency: '',
+  };
 
   async componentDidMount() {
     const { fetchCurrencies } = this.props;
+
     await fetchCurrencies();
     const { currencies } = this.props;
     this.setState({ currency: currencies[0] });
@@ -27,19 +29,18 @@ class WalletForm extends Component {
 
   componentDidUpdate(prevProps) {
     const { expenseId, isEditMode, expenses } = this.props;
+
     if (isEditMode && !prevProps.isEditMode) {
-      const expense = expenses.find(({ id }) => id === expenseId);
-      this.setState({
-        description: expense.description,
-        tag: expense.tag,
-        value: expense.value,
-        method: expense.method,
-        currency: expense.currency });
+      const expenseCopy = { ...expenses[expenseId] };
+      delete expenseCopy.exchangeRates;
+      delete expenseCopy.id;
+      this.setState({ ...expenseCopy });
     }
   }
 
   resetLocalState = () => {
     const { currencies } = this.props;
+
     this.setState({
       description: '',
       tag: defaultTag,
@@ -54,53 +55,38 @@ class WalletForm extends Component {
     this.setState({ [name]: value });
   };
 
-  handleSubmitForm = (e) => {
+  handleSubmitForm = async (e) => {
     e.preventDefault();
-    const { isEditMode } = this.props;
-    if (isEditMode) this.submitEditedForm();
-    else this.submitNewForm();
-  };
-
-  submitNewForm = async () => {
-    const { fetchExchangeRates, saveExpenseToState,
+    const { isEditMode, saveExpensesToState,
       expenses, getTotalExpenses } = this.props;
-    const exchangeRates = await fetchExchangeRates();
-    const higherExpenseId = expenses.length > 0 ? expenses
-      .sort(({ id: idA }, { id: idB }) => idA - idB)[expenses.length - 1].id : null;
-    const expense = {
-      id: higherExpenseId !== null ? higherExpenseId + 1 : 0,
-      ...this.state,
-      exchangeRates };
-    saveExpenseToState([expense]);
-    getTotalExpenses();
-    this.resetLocalState();
-  };
 
-  submitEditedForm = () => {
-    const { expenses, expenseId, removeExpenses,
-      saveExpenseToState, getTotalExpenses } = this.props;
-    const { description, tag, value, method, currency } = this.state;
-    const expensesCopy = [...expenses];
-    expensesCopy.map((expense) => {
-      if (expense.id === expenseId) {
-        expense.description = description;
-        expense.tag = tag;
-        expense.value = value;
-        expense.method = method;
-        expense.currency = currency;
-      } return expense;
-    });
-    removeExpenses();
-    saveExpenseToState(...[expensesCopy]);
+    let updatedExpenses = [];
+
+    if (isEditMode) {
+      const { expenseId } = this.props;
+
+      updatedExpenses = [...expenses];
+      updatedExpenses[expenseId] = {
+        ...updatedExpenses[expenseId],
+        ...this.state,
+      };
+    } else {
+      const { fetchExchangeRates } = this.props;
+
+      const exchangeRates = await fetchExchangeRates();
+      const expense = { id: expenses.length, ...this.state, exchangeRates };
+      updatedExpenses = [...expenses, expense];
+    }
+    saveExpensesToState(updatedExpenses);
     getTotalExpenses();
     this.resetLocalState();
   };
 
   render() {
-    const { isLoading, isEditMode, currencies, error } = this.props;
+    const { isLoading, isEditMode, currencies } = this.props;
     const { description, value, currency, tag, method } = this.state;
+
     if (isLoading) return (<h4 className="loading">Loading...</h4>);
-    if (error) return (<h4 className="error-message">{`Erro: ${error}`}</h4>);
     return (
       <div className="wallet-form">
         <form className="form-container" onSubmit={ this.handleSubmitForm }>
@@ -185,32 +171,40 @@ class WalletForm extends Component {
     );
   }
 }
+
 WalletForm.propTypes = {
   currencies: PropTypes.arrayOf(PropTypes.string).isRequired,
-  error: PropTypes.string.isRequired,
   expenseId: PropTypes.number.isRequired,
-  expenses: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
+  expenses: PropTypes.arrayOf(PropTypes.shape({
+    description: PropTypes.string,
+    tag: PropTypes.string,
+    value: PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.number,
+    ]),
+    method: PropTypes.string,
+    currency: PropTypes.string })).isRequired,
   fetchCurrencies: PropTypes.func.isRequired,
   fetchExchangeRates: PropTypes.func.isRequired,
   getTotalExpenses: PropTypes.func.isRequired,
   isEditMode: PropTypes.bool.isRequired,
   isLoading: PropTypes.bool.isRequired,
-  removeExpenses: PropTypes.func.isRequired,
-  saveExpenseToState: PropTypes.func.isRequired,
+  saveExpensesToState: PropTypes.func.isRequired,
 };
+
 const mapStateToProps = ({ wallet }) => ({
   currencies: wallet.currencies,
   isLoading: wallet.isFetchingCur,
-  error: wallet.errorMessage,
   expenses: wallet.expenses,
   isEditMode: wallet.editor,
   expenseId: wallet.idToEdit,
 });
+
 const mapDispatchToProps = (dispatch) => ({
   fetchCurrencies: () => dispatch(thunkCurrencies()),
   fetchExchangeRates: () => dispatch(thunkExchangeRates()),
-  saveExpenseToState: (expense) => dispatch(saveExpense(expense)),
-  removeExpenses: () => dispatch(deleteExpenses()),
+  saveExpensesToState: (expense) => dispatch(saveExpenses(expense)),
   getTotalExpenses: () => dispatch(getTotalOfExpenses()),
 });
+
 export default connect(mapStateToProps, mapDispatchToProps)(WalletForm);

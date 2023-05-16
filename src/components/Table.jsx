@@ -10,25 +10,8 @@ const tableHeaderContent = [
   'Valor convertido', 'Moeda de conversão', 'Editar/Excluir',
 ];
 class Table extends Component {
-  // // Função para distribuir a tabela de despesas com elementos vazios
-  // //
-  // getExpensesWithEmptyElements = () => {
-  //   const { expenses } = this.props;
-  //   const emptyDefaultQuantity = 6;
-  //   const currentEmptyQuantity = Math.max(0, emptyDefaultQuantity - expenses.length);
-
-  //   let expensesCopy = [...expenses];
-
-  //   for (let index = 0; index < currentEmptyQuantity; index += 1) {
-  //     expensesCopy = [...expensesCopy, null];
-  //   }
-
-  //   return expensesCopy;
-  // };
-
   render() {
     const { expenses, isLoading } = this.props;
-    // const expensesWithEmptyElements = this.getExpensesWithEmptyElements();
     return (
       <div className="expenses-table-component">
         <div className="expenses-table-div">
@@ -39,19 +22,15 @@ class Table extends Component {
                   {tableHeaderContent.map((header) => (
                     <th key={ Math.random() }>
                       {header}
-                    </th>
-                  ))}
+                    </th>))}
                 </tr>
               </thead>
 
               <tbody>
-
                 {expenses.map((expense) => (
                   <tr key={ Math.random() }>
                     <TableElementCard expense={ expense } />
-                  </tr>
-                ))}
-
+                  </tr>))}
               </tbody>
             </table>
           )}

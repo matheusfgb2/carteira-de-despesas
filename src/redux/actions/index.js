@@ -7,14 +7,14 @@ export const getEmail = (email) => ({
 });
 
 // wallet actions
-export const SAVE_EXPENSE = 'SAVE_EXPENSE';
+export const SAVE_EXPENSES = 'SAVE_EXPENSE';
 export const EDIT_EXPENSE = 'EDIT_EXPENSE';
-export const DELETE_EXPENSES = 'DELETE_EXPENSES';
+export const DELETE_EXPENSE = 'DELETE_EXPENSE';
 export const GET_TOTAL_OF_EXPENSES = 'GET_TOTAL_OF_EXPENSES';
 
-export const saveExpense = (expense) => ({
-  type: SAVE_EXPENSE,
-  payload: expense,
+export const saveExpenses = (expenses) => ({
+  type: SAVE_EXPENSES,
+  payload: expenses,
 });
 
 export const editExpense = (expenseId) => ({
@@ -22,9 +22,9 @@ export const editExpense = (expenseId) => ({
   payload: expenseId,
 });
 
-export const deleteExpenses = (expenseId = '') => ({
-  type: DELETE_EXPENSES,
-  payload: expenseId,
+export const deleteExpense = (expenses) => ({
+  type: DELETE_EXPENSE,
+  payload: expenses,
 });
 
 export const getTotalOfExpenses = () => ({ type: GET_TOTAL_OF_EXPENSES });

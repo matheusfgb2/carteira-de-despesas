@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { renderWithRouterAndRedux } from './helpers/renderWith';
 
 import App from '../App';
-import mockFetch from '../../cypress/mocks/fetch';
+import { mockData } from './helpers/mockData';
 
 describe('1 - Tela do login', () => {
   it('Verifica se há um input de email, um input de senha e um botão de entrar', () => {
@@ -37,11 +37,13 @@ describe('1 - Tela do login', () => {
 
 describe('2 - Tela da carteira', () => {
   beforeEach(() => {
-    global.fetch = jest.fn(mockFetch);
+    global.fetch = jest.fn(async () => ({
+      json: async () => mockData,
+    }));
   });
 
   afterEach(() => {
-    global.fetch.mockClear();
+    jest.restoreAllMocks();
   });
 
   it('Verifica se a API da taxa de câmbio é chamada ao carregar a página', async () => {
@@ -75,5 +77,83 @@ describe('2 - Tela da carteira', () => {
     userEvent.selectOptions(methodEl, screen.getByRole('option', { name: /cartão de crédito/i }));
     userEvent.selectOptions(currencyEl, screen.getByRole('option', { name: /eur/i }));
     userEvent.click(screen.getByRole('button', { name: /adicionar despesa/i }));
+  });
+
+  it('Verifica se é possível deletar uma despesa', async () => {
+    renderWithRouterAndRedux(<App />, { initialEntries: ['/carteira'] });
+
+    await waitForElementToBeRemoved(() => screen.getByText(/loading/i));
+
+    const descriptionEl = screen.getByRole('textbox', { name: /descrição:/i });
+    const tagEl = screen.getByRole('combobox', { name: /categoria:/i });
+    const valueEl = screen.getByRole('spinbutton', { name: /valor:/i });
+    const methodEl = screen.getByRole('combobox', { name: /método de pagamento:/i });
+    const currencyEl = screen.getByRole('combobox', { name: /moeda:/i });
+
+    userEvent.type(descriptionEl, 'Tênis');
+    userEvent.selectOptions(tagEl, screen.getByRole('option', { name: /lazer/i }));
+    userEvent.clear(valueEl);
+    userEvent.type(valueEl, '500');
+    userEvent.selectOptions(methodEl, screen.getByRole('option', { name: /cartão de crédito/i }));
+    userEvent.selectOptions(currencyEl, screen.getByRole('option', { name: /eur/i }));
+
+    userEvent.click(screen.getByRole('button', { name: /adicionar despesa/i }));
+
+    await waitForElementToBeRemoved(() => screen.getByText(/loading/i));
+    const eurExchangeRateEl = screen.getByRole('cell', { name: /5\.35/i });
+    expect(eurExchangeRateEl).toBeInTheDocument();
+    const deleteBtnEl = screen.getByRole('button', { name: /excluir/i });
+    userEvent.click(deleteBtnEl);
+    expect(eurExchangeRateEl).not.toBeInTheDocument();
+  });
+
+  it('Verifica se é possível editar uma despesa', async () => {
+    renderWithRouterAndRedux(<App />, { initialEntries: ['/carteira'] });
+
+    await waitForElementToBeRemoved(() => screen.getByText(/loading/i));
+
+    const descriptionEl = screen.getByRole('textbox', { name: /descrição:/i });
+    const tagEl = screen.getByRole('combobox', { name: /categoria:/i });
+    const valueEl = screen.getByRole('spinbutton', { name: /valor:/i });
+    const methodEl = screen.getByRole('combobox', { name: /método de pagamento:/i });
+    const currencyEl = screen.getByRole('combobox', { name: /moeda:/i });
+
+    userEvent.type(descriptionEl, 'Tênis');
+    userEvent.selectOptions(tagEl, screen.getByRole('option', { name: /lazer/i }));
+    userEvent.clear(valueEl);
+    userEvent.type(valueEl, '500');
+    userEvent.selectOptions(methodEl, screen.getByRole('option', { name: /cartão de crédito/i }));
+    userEvent.selectOptions(currencyEl, screen.getByRole('option', { name: /eur/i }));
+
+    userEvent.click(screen.getByRole('button', { name: /adicionar despesa/i }));
+
+    await waitForElementToBeRemoved(() => screen.getByText(/loading/i));
+    const firtConvertedValueEl = screen.getByRole('cell', { name: /2673\.40/i });
+    expect(firtConvertedValueEl).toBeInTheDocument();
+    const editBtnEl = screen.getByRole('button', { name: 'Editar' });
+    userEvent.click(editBtnEl);
+    userEvent.clear(valueEl);
+    userEvent.type(valueEl, '300');
+    const submitEditBtnEl = screen.getByRole('button', { name: /editar despesa/i });
+
+    userEvent.click(submitEditBtnEl);
+    const secondConvertedValueEl = screen.getByRole('cell', { name: /1604\.04/i });
+    expect(secondConvertedValueEl).toBeInTheDocument();
+  });
+  it('Verifica se, numa situação de erro, há uma mensagem de erro na tela', async () => {
+    global.fetch.mockImplementation(async () => {
+      try {
+        const API_URL = 'https://url_errada.com/error';
+        const request = await fetch(API_URL);
+        const data = await request.json();
+        return data;
+      } catch (error) {
+        throw new Error(error.message);
+      }
+    });
+    renderWithRouterAndRedux(<App />, { initialEntries: ['/carteira'] });
+
+    await waitForElementToBeRemoved(() => screen.getByText(/loading/i));
+    expect(screen.getByText(/error/i)).toBeInTheDocument();
   });
 });

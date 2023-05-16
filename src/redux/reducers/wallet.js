@@ -1,5 +1,8 @@
-import { SAVE_EXPENSE, EDIT_EXPENSE,
-  GET_TOTAL_OF_EXPENSES, DELETE_EXPENSES } from '../actions';
+import {
+  SAVE_EXPENSES, EDIT_EXPENSE,
+  GET_TOTAL_OF_EXPENSES, DELETE_EXPENSE,
+} from '../actions';
+
 import {
   CUR_REQUEST_STARTED,
   CUR_REQUEST_SUCCESSFUL,
@@ -30,21 +33,20 @@ const wallet = (state = INITIAL_STATE, action) => {
   case CUR_REQUEST_SUCCESSFUL:
     return { ...state, isFetchingCur: false, currencies: action.payload };
   case CUR_REQUEST_FAILED:
-    return { ...state, isFetchingCur: false, errorMessage: action.payload.message };
+    return { ...state, isFetchingCur: false, errorMessage: action.payload };
 
   case E_R_REQUEST_STARTED:
     return { ...state, isFetchingER: true };
   case E_R_REQUEST_SUCCESSFUL:
     return { ...state, isFetchingER: false };
   case E_R_REQUEST_FAILED:
-    return { ...state, isFetchingER: false, errorMessage: action.payload.message };
+    return { ...state, isFetchingER: false, errorMessage: action.payload };
 
-  case SAVE_EXPENSE:
+  case SAVE_EXPENSES:
     return {
       ...state,
       editor: false,
-      expenses: (state.expenses.length > 0) ? [...state.expenses, ...action.payload]
-        : action.payload,
+      expenses: action.payload,
     };
   case EDIT_EXPENSE:
     return {
@@ -52,11 +54,10 @@ const wallet = (state = INITIAL_STATE, action) => {
       editor: true,
       idToEdit: action.payload,
     };
-  case DELETE_EXPENSES:
+  case DELETE_EXPENSE:
     return {
       ...state,
-      expenses: action.payload === '' ? [] : (
-        state.expenses.filter(({ id }) => id !== action.payload)),
+      expenses: action.payload,
     };
   case GET_TOTAL_OF_EXPENSES:
     return {

@@ -42,7 +42,8 @@ const eRRequestSuccessful = () => ({
   type: E_R_REQUEST_SUCCESSFUL,
 });
 const eRRequestFailed = (error) => ({
-  type: E_R_REQUEST_FAILED, payload: error,
+  type: E_R_REQUEST_FAILED,
+  payload: error,
 });
 
 export function thunkExchangeRates() {
