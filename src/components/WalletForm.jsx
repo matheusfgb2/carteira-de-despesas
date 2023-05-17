@@ -19,6 +19,7 @@ const defaultState = {
   value: '',
   method: defaultPayment,
   currency: defaultCurrency,
+  isFormIncomplete: true,
 };
 
 class WalletForm extends Component {
@@ -34,27 +35,35 @@ class WalletForm extends Component {
 
     if (isEditMode && !prevProps.isEditMode) {
       const expenseCopy = { ...expenses.find(({ id }) => id === expenseId) };
-      delete expenseCopy.id;
-      delete expenseCopy.exchangeRates;
-      this.setState({ ...expenseCopy });
+      const { id, description, tag, value, method, currency } = expenseCopy;
+      this.setState({ id, description, tag, value, method, currency });
     }
   }
 
   handleChangeForm = ({ target }) => {
     const { name, value } = target;
-    this.setState({ [name]: value });
+    this.setState({ [name]: value }, this.validateForm);
+  };
+
+  validateForm = () => {
+    const { description, value } = this.state;
+    this.setState({
+      isFormIncomplete: !(description.length && value > 0),
+    });
   };
 
   handleSubmitForm = async (e) => {
     e.preventDefault();
     const { isEditMode } = this.props;
+    const { id, description, tag, value, method, currency } = this.state;
+    const expenseData = { id, description, tag, value, method, currency };
 
     if (isEditMode) {
       const { saveUpdatedExpense } = this.props;
-      saveUpdatedExpense(this.state);
+      saveUpdatedExpense(expenseData);
     } else {
       const { fetchCurrenciesAndAddExpense } = this.props;
-      await fetchCurrenciesAndAddExpense(this.state);
+      await fetchCurrenciesAndAddExpense(expenseData);
     }
 
     this.resetLocalState(isEditMode);
@@ -69,7 +78,7 @@ class WalletForm extends Component {
 
   render() {
     const { isEditMode, currencies } = this.props;
-    const { description, value, currency, tag, method } = this.state;
+    const { description, value, currency, tag, method, isFormIncomplete } = this.state;
 
     return (
       <div className="wallet-form">
@@ -143,11 +152,11 @@ class WalletForm extends Component {
             </select>
           </label>
           {isEditMode ? (
-            <button type="submit" className="form-btn edit">
+            <button type="submit" className="form-btn edit" disabled={ isFormIncomplete }>
               Editar despesa
             </button>
           ) : (
-            <button type="submit" className="form-btn">
+            <button type="submit" className="form-btn" disabled={ isFormIncomplete }>
               Adicionar despesa
             </button>)}
         </form>

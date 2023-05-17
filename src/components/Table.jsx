@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import TableElementCard from './TableElementCard';
+import TableBodyRowCard from './TableBodyRowCard';
 import './Table.css';
 import { expensesPropTypes } from '../types';
 
@@ -10,6 +10,7 @@ const tableHeaderContent = [
   'Valor', 'Moeda', 'Câmbio utilizado',
   'Valor convertido', 'Moeda de conversão', 'Editar/Excluir',
 ];
+
 class Table extends Component {
   render() {
     const { expenses, isLoading } = this.props;
@@ -29,12 +30,10 @@ class Table extends Component {
 
               <tbody>
                 {expenses.map((expense) => (
-                  <tr key={ Math.random() }>
-                    <TableElementCard expense={ expense } />
-                  </tr>))}
+                  <TableBodyRowCard key={ Math.random() } expense={ expense } />
+                ))}
               </tbody>
-            </table>
-          )}
+            </table>)}
         </div>
       </div>
     );

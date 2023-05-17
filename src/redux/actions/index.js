@@ -60,11 +60,11 @@ export function thunkCurrenciesAndAddExpense(expenseData = undefined) {
           exchangeRates,
         };
         dispatch(expenseSuccessful(expense));
-      } else {
-        const currencies = Object.keys(exchangeRates)
-          .filter((currency) => currency !== 'USDT');
-        dispatch(currenciesSuccessful(currencies));
+        return;
       }
+      const currencies = Object.keys(exchangeRates)
+        .filter((currency) => currency !== 'USDT');
+      dispatch(currenciesSuccessful(currencies));
     } catch (error) {
       dispatch(requestFailed(error.message));
     }

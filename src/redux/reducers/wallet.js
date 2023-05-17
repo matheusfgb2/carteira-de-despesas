@@ -3,7 +3,7 @@ import {
   SAVE_EDITED_EXPENSE, GET_ID_TO_EDIT, DELETE_EXPENSE,
 } from '../actions';
 
-import { updateExpenses } from '../../helpers';
+import { updateExpenses } from '../helpers';
 
 const INITIAL_STATE = {
   currencies: [],

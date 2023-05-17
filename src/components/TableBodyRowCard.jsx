@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { getIdToEdit, deleteExpense } from '../redux/actions';
 import { expensePropTypes } from '../types';
 
-class TableElementCard extends Component {
+class TableBodyRowCard extends Component {
   render() {
     const { expense, getIdToEditExpense, removeExpense } = this.props;
     const { description, tag, method, value, currency, exchangeRates, id } = expense;
@@ -15,7 +15,7 @@ class TableElementCard extends Component {
     const fixedValue = Number(value).toFixed(2);
 
     return (
-      <>
+      <tr>
         <td>{description}</td>
         <td>{tag}</td>
         <td>{method}</td>
@@ -25,32 +25,27 @@ class TableElementCard extends Component {
         <td>{convertedValue}</td>
         <td>Real</td>
         <td>
-
           <button
             type="button"
             data-testid="edit-btn"
             onClick={ () => getIdToEditExpense(id) }
           >
             Editar
-
           </button>
-
           <button
             type="button"
             data-testid="delete-btn"
             onClick={ () => removeExpense(id) }
           >
             Excluir
-
           </button>
-
         </td>
-      </>
+      </tr>
     );
   }
 }
 
-TableElementCard.propTypes = {
+TableBodyRowCard.propTypes = {
   expense: expensePropTypes.isRequired,
   getIdToEditExpense: PropTypes.func.isRequired,
   removeExpense: PropTypes.func.isRequired,
@@ -66,4 +61,4 @@ const mapDispatchToProps = (dispatch) => ({
   removeExpense: (expenseId) => dispatch(deleteExpense(expenseId)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(TableElementCard);
+export default connect(mapStateToProps, mapDispatchToProps)(TableBodyRowCard);

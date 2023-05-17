@@ -50,6 +50,12 @@
   transform: scale(0.95);
 }
 
+.form-btn:disabled {
+  background-color: red;
+  cursor: unset;
+  transform: unset;
+}
+
 .edit {
   background-color: rgb(3, 67, 224);
 }
