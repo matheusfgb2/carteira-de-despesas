@@ -1,22 +1,12 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { editExpense, deleteExpense, getTotalOfExpenses } from '../redux/actions';
+import { getIdToEdit, deleteExpense } from '../redux/actions';
+import { expensePropTypes } from '../types';
 
 class TableElementCard extends Component {
-  handleClickToRemove = (expenseId) => {
-    const { expenses, removeExpense } = this.props;
-    const filteredExpenses = expenses.filter(({ id }) => id !== expenseId);
-    // Update expenses ids
-    // filteredExpenses.forEach((expense, index) => {
-    //   expense.id = index;
-    // });
-    removeExpense(filteredExpenses);
-  };
-  // YOUID
-
   render() {
-    const { expense, reviseExpense } = this.props;
+    const { expense, getIdToEditExpense, removeExpense } = this.props;
     const { description, tag, method, value, currency, exchangeRates, id } = expense;
     const currencyName = exchangeRates[currency].name;
     const currencyRate = Number(exchangeRates[currency].ask);
@@ -39,7 +29,7 @@ class TableElementCard extends Component {
           <button
             type="button"
             data-testid="edit-btn"
-            onClick={ () => { reviseExpense(id); getTotalExpenses(); } }
+            onClick={ () => getIdToEditExpense(id) }
           >
             Editar
 
@@ -48,7 +38,7 @@ class TableElementCard extends Component {
           <button
             type="button"
             data-testid="delete-btn"
-            onClick={ () => { this.handleClickToRemove(id); getTotalExpenses(); } }
+            onClick={ () => removeExpense(id) }
           >
             Excluir
 
@@ -61,21 +51,9 @@ class TableElementCard extends Component {
 }
 
 TableElementCard.propTypes = {
-  expense: PropTypes.shape({
-    currency: PropTypes.string,
-    description: PropTypes.string,
-    exchangeRates: PropTypes.shape({
-      ask: PropTypes.string,
-      name: PropTypes.string,
-    }),
-    id: PropTypes.number,
-    method: PropTypes.string,
-    tag: PropTypes.string,
-    value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-  }).isRequired,
-  expenses: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
+  expense: expensePropTypes.isRequired,
+  getIdToEditExpense: PropTypes.func.isRequired,
   removeExpense: PropTypes.func.isRequired,
-  reviseExpense: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = ({ wallet }) => ({
@@ -84,9 +62,8 @@ const mapStateToProps = ({ wallet }) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  reviseExpense: (expenseId) => dispatch(editExpense(expenseId)),
+  getIdToEditExpense: (expenseId) => dispatch(getIdToEdit(expenseId)),
   removeExpense: (expenseId) => dispatch(deleteExpense(expenseId)),
-  getTotalExpenses: () => dispatch(getTotalOfExpenses()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(TableElementCard);

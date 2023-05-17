@@ -1,25 +1,28 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { thunkCurrenciesAndAddExpense } from '../redux/actions/thunks';
-import { saveExpenses, getTotalOfExpenses } from '../redux/actions';
+import { thunkCurrenciesAndAddExpense, saveEditedExpense } from '../redux/actions';
+import { expensesPropTypes } from '../types';
 import './WalletForm.css';
 
 const paymentMethods = ['Dinheiro', 'Cartão de crédito', 'Cartão de débito'];
 const tags = ['Alimentação', 'Lazer', 'Trabalho', 'Transporte', 'Saúde'];
+
 const defaultPayment = paymentMethods[0];
 const defaultTag = tags[0];
 const defaultCurrency = 'USD';
 
+const defaultState = {
+  id: 0,
+  description: '',
+  tag: defaultTag,
+  value: '',
+  method: defaultPayment,
+  currency: defaultCurrency,
+};
+
 class WalletForm extends Component {
-  state = {
-    id: 0,
-    description: '',
-    tag: defaultTag,
-    value: '',
-    method: defaultPayment,
-    currency: defaultCurrency,
-  };
+  state = { ...defaultState };
 
   async componentDidMount() {
     const { fetchCurrenciesAndAddExpense } = this.props;
@@ -30,59 +33,44 @@ class WalletForm extends Component {
     const { expenseId, isEditMode, expenses } = this.props;
 
     if (isEditMode && !prevProps.isEditMode) {
-      const expenseCopy = { ...expenses[expenseId] };
-      delete expenseCopy.exchangeRates;
+      const expenseCopy = { ...expenses.find(({ id }) => id === expenseId) };
       delete expenseCopy.id;
+      delete expenseCopy.exchangeRates;
       this.setState({ ...expenseCopy });
     }
   }
 
-  resetLocalState = (editMode = false) => {
-    this.setState((prevState) => ({
-      id: editMode ? prevState.id : prevState.id + 1,
-      description: '',
-      tag: defaultTag,
-      value: '',
-      method: defaultPayment,
-      currency: defaultCurrency,
-    }));
-  };
-
   handleChangeForm = ({ target }) => {
     const { name, value } = target;
     this.setState({ [name]: value });
-    console.log(this.state);
   };
 
   handleSubmitForm = async (e) => {
     e.preventDefault();
-    const { isEditMode, saveExpensesToState,
-      expenses, getTotalExpenses } = this.props;
-
-    let updatedExpenses = [];
+    const { isEditMode } = this.props;
 
     if (isEditMode) {
-      const { expenseId } = this.props;
-
-      updatedExpenses = [...expenses];
-      updatedExpenses[expenseId] = {
-        ...updatedExpenses[expenseId],
-        ...this.state,
-      };
-      saveExpensesToState(updatedExpenses);
+      const { saveUpdatedExpense } = this.props;
+      saveUpdatedExpense(this.state);
     } else {
       const { fetchCurrenciesAndAddExpense } = this.props;
       await fetchCurrenciesAndAddExpense(this.state);
     }
-    getTotalExpenses();
+
     this.resetLocalState(isEditMode);
   };
 
+  resetLocalState = (isEditMode) => {
+    this.setState((prevState) => ({
+      ...defaultState,
+      id: isEditMode ? prevState.id : prevState.id + 1,
+    }));
+  };
+
   render() {
-    const { isLoading, isEditMode, currencies } = this.props;
+    const { isEditMode, currencies } = this.props;
     const { description, value, currency, tag, method } = this.state;
 
-    if (isLoading) return (<h4 className="loading">Loading...</h4>);
     return (
       <div className="wallet-form">
         <form className="form-container" onSubmit={ this.handleSubmitForm }>
@@ -109,7 +97,7 @@ class WalletForm extends Component {
               onChange={ this.handleChangeForm }
             >
               {tags.map((category) => (
-                <option key={ Math.random() } value={ category }>{category}</option>))}
+                <option key={ category } value={ category }>{category}</option>))}
             </select>
           </label>
           <label htmlFor="value">
@@ -134,7 +122,7 @@ class WalletForm extends Component {
             >
               {paymentMethods.map((paymentMethod) => (
                 <option
-                  key={ Math.random() }
+                  key={ paymentMethod }
                   value={ paymentMethod }
                 >
                   {paymentMethod}
@@ -151,7 +139,7 @@ class WalletForm extends Component {
               onChange={ this.handleChangeForm }
             >
               {currencies.map((coin) => (
-                <option key={ Math.random() } value={ coin }>{coin}</option>))}
+                <option key={ coin } value={ coin }>{coin}</option>))}
             </select>
           </label>
           {isEditMode ? (
@@ -171,23 +159,14 @@ class WalletForm extends Component {
 WalletForm.propTypes = {
   currencies: PropTypes.arrayOf(PropTypes.string).isRequired,
   expenseId: PropTypes.number.isRequired,
-  expenses: PropTypes.arrayOf(PropTypes.shape({
-    description: PropTypes.string,
-    tag: PropTypes.string,
-    value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-    method: PropTypes.string,
-    currency: PropTypes.string,
-  })).isRequired,
+  expenses: expensesPropTypes.isRequired,
   fetchCurrenciesAndAddExpense: PropTypes.func.isRequired,
-  getTotalExpenses: PropTypes.func.isRequired,
   isEditMode: PropTypes.bool.isRequired,
-  isLoading: PropTypes.bool.isRequired,
-  saveExpensesToState: PropTypes.func.isRequired,
+  saveUpdatedExpense: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = ({ wallet }) => ({
   currencies: wallet.currencies,
-  isLoading: wallet.isFetching,
   expenses: wallet.expenses,
   isEditMode: wallet.editor,
   expenseId: wallet.idToEdit,
@@ -197,8 +176,7 @@ const mapDispatchToProps = (dispatch) => ({
   fetchCurrenciesAndAddExpense: (stateData) => {
     dispatch(thunkCurrenciesAndAddExpense(stateData));
   },
-  saveExpensesToState: (expense) => dispatch(saveExpenses(expense)),
-  getTotalExpenses: () => dispatch(getTotalOfExpenses()),
+  saveUpdatedExpense: (expenseData) => dispatch(saveEditedExpense(expenseData)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(WalletForm);

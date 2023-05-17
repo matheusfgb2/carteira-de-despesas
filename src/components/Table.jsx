@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import TableElementCard from './TableElementCard';
 import './Table.css';
+import { expensesPropTypes } from '../types';
 
 const tableHeaderContent = [
   'Descrição', 'Tag', 'Método de pagamento',
@@ -41,7 +42,7 @@ class Table extends Component {
 }
 
 Table.propTypes = {
-  expenses: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
+  expenses: expensesPropTypes.isRequired,
   isLoading: PropTypes.bool.isRequired,
 };
 

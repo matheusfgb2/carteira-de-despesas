@@ -1,13 +1,9 @@
 import {
-  SAVE_EXPENSES, EDIT_EXPENSE, DELETE_EXPENSE, GET_TOTAL_OF_EXPENSES,
+  REQUEST_STARTED, CURRENCIES_SUCCESSFUL, EXPENSE_SUCCESSFUL, REQUEST_FAILED,
+  SAVE_EDITED_EXPENSE, GET_ID_TO_EDIT, DELETE_EXPENSE,
 } from '../actions';
 
-import {
-  REQUEST_STARTED,
-  CURRENCIES_SUCCESSFUL,
-  REQUEST_FAILED,
-  EXPENSE_SUCCESSFUL,
-} from '../actions/thunks';
+import { updateExpenses } from '../../helpers';
 
 const INITIAL_STATE = {
   currencies: [],
@@ -22,7 +18,8 @@ const INITIAL_STATE = {
 const wallet = (state = INITIAL_STATE, action) => {
   switch (action.type) {
   case REQUEST_STARTED:
-    return { ...state, isFetching: true };
+    return {
+      ...state, isFetching: true };
   case CURRENCIES_SUCCESSFUL:
     return {
       ...state,
@@ -38,34 +35,23 @@ const wallet = (state = INITIAL_STATE, action) => {
   case REQUEST_FAILED:
     return { ...state, isFetching: false, errorMessage: action.payload };
 
-  case GET_TOTAL_OF_EXPENSES:
-    return {
-      ...state,
-      totalOfExpenses: state.expenses.reduce((total, expense) => {
-        const { currency } = expense;
-        const rating = expense.exchangeRates[currency].ask;
-        const finalValue = Number(rating) * Number(expense.value);
-        return total + finalValue;
-      }, 0),
-    };
-  case SAVE_EXPENSES:
-    return {
-      ...state,
-      editor: false,
-      expenses: action.payload,
-    };
-  case EDIT_EXPENSE:
+  case GET_ID_TO_EDIT:
     return {
       ...state,
       editor: true,
       idToEdit: action.payload,
     };
+  case SAVE_EDITED_EXPENSE:
+    return {
+      ...state,
+      editor: false,
+      expenses: updateExpenses(state.expenses, state.idToEdit, action.payload),
+    };
   case DELETE_EXPENSE:
     return {
       ...state,
-      expenses: action.payload,
+      expenses: updateExpenses(state.expenses, action.payload),
     };
-
   default:
     return state;
   }
