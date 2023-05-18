@@ -27,13 +27,11 @@ class Login extends React.Component {
   loginValidation = () => {
     const { email, password } = this.state;
 
-    const emailRegex = /^[A-Za-z0-9_!#$%&'*+/=?`{|}~^.-]+@[A-Za-z0-9.-]+$/;
-    const doesEmailHaveDotCom = email.includes('.com');
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.(com|com\.br|net)$/;
     const minPasswordLength = 5;
 
     const validations = [
       emailRegex.test(email),
-      doesEmailHaveDotCom,
       password.length > minPasswordLength,
     ];
     const isValidLogin = validations.every((validation) => validation);
