@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { nanoid } from 'nanoid';
 import { thunkCurrenciesAndAddExpense, saveEditedExpense } from '../redux/actions';
 import { expensesPropTypes } from '../types';
 import './WalletForm.css';
@@ -11,9 +12,9 @@ const tags = ['Alimentação', 'Lazer', 'Trabalho', 'Transporte', 'Saúde'];
 const defaultPayment = paymentMethods[0];
 const defaultTag = tags[0];
 const defaultCurrency = 'USD';
+const idLength = 6;
 
 const defaultState = {
-  id: 0,
   description: '',
   tag: defaultTag,
   value: '',
@@ -23,7 +24,7 @@ const defaultState = {
 };
 
 class WalletForm extends Component {
-  state = { ...defaultState };
+  state = { id: nanoid(idLength), ...defaultState };
 
   async componentDidMount() {
     const { fetchCurrenciesAndAddExpense } = this.props;
@@ -71,8 +72,8 @@ class WalletForm extends Component {
 
   resetLocalState = (isEditMode) => {
     this.setState((prevState) => ({
+      id: isEditMode ? prevState.id : nanoid(idLength),
       ...defaultState,
-      id: isEditMode ? prevState.id : prevState.id + 1,
     }));
   };
 
@@ -167,7 +168,7 @@ class WalletForm extends Component {
 
 WalletForm.propTypes = {
   currencies: PropTypes.arrayOf(PropTypes.string).isRequired,
-  expenseId: PropTypes.number.isRequired,
+  expenseId: PropTypes.string.isRequired,
   expenses: expensesPropTypes.isRequired,
   fetchCurrenciesAndAddExpense: PropTypes.func.isRequired,
   isEditMode: PropTypes.bool.isRequired,

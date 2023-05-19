@@ -4,10 +4,7 @@ export const GET_USER = 'GET_USER';
 
 export const createUser = (userData) => ({
   type: CREATE_USER,
-  payload: {
-    ...userData,
-    id: '0',
-  },
+  payload: userData,
 });
 
 export const getUser = (userId) => ({

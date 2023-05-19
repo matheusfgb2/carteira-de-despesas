@@ -1,13 +1,16 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { nanoid } from 'nanoid';
 
 import { thunkCurrenciesAndAddExpense, createUser } from '../../../redux/actions';
 import './Form.css';
 
-// Create User Form
+const idLength = 10;
+
 class Form extends Component {
   state = {
+    id: nanoid(idLength),
     name: '',
     email: '',
     currency: 'USD',
@@ -38,9 +41,9 @@ class Form extends Component {
 
   handleSubmit = (e) => {
     e.preventDefault();
-    const { name, email, currency } = this.state;
+    const { id, name, email, currency } = this.state;
     const { newUser } = this.props;
-    const userData = { name, email, currency };
+    const userData = { id, name, email, currency };
     newUser(userData);
   };
 
