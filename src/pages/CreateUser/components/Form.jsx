@@ -21,7 +21,7 @@ class Form extends Component {
     await fetchCurrencies();
   }
 
-  handleChangeForm = ({ target }) => {
+  handleChange = ({ target }) => {
     const { name, value } = target;
     this.setState({ [name]: value }, this.handleValidation);
   };
@@ -36,7 +36,7 @@ class Form extends Component {
     this.setState({ isValidName, isValidEmail, isValidUser });
   };
 
-  handleSubmitForm = (e) => {
+  handleSubmit = (e) => {
     e.preventDefault();
     const { name, email, currency } = this.state;
     const { newUser } = this.props;
@@ -49,7 +49,7 @@ class Form extends Component {
     const { currencies } = this.props;
     return (
       <div>
-        <form onSubmit={ this.handleSubmitForm }>
+        <form onSubmit={ this.handleSubmit }>
           <label htmlFor="name">
             Nome
             <input
@@ -57,7 +57,7 @@ class Form extends Component {
               name="name"
               id="name"
               value={ name }
-              onChange={ this.handleChangeForm }
+              onChange={ this.handleChange }
             />
           </label>
           <label htmlFor="email">
@@ -67,7 +67,7 @@ class Form extends Component {
               name="email"
               id="email"
               value={ email }
-              onChange={ this.handleChangeForm }
+              onChange={ this.handleChange }
             />
           </label>
           <label htmlFor="currency">
@@ -77,7 +77,7 @@ class Form extends Component {
               id="currency"
               data-testid="currency-input"
               value={ currency }
-              onChange={ this.handleChangeForm }
+              onChange={ this.handleChange }
             >
               {currencies.map((coin) => (
                 <option key={ coin } value={ coin }>{coin}</option>))}

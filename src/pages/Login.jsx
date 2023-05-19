@@ -2,51 +2,47 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { getEmail } from '../redux/actions';
 import './Login.css';
 
 class Login extends React.Component {
   state = {
     email: '',
-    password: '',
-    isValidLogin: false,
+    isValidEmail: true,
+    userId: '',
   };
 
-  handleChangeInput = ({ target }) => {
+  handleChange = ({ target }) => {
     const { name, value } = target;
-    this.setState({ [name]: value }, this.loginValidation);
+    this.setState({ [name]: value });
   };
 
-  handleClick = () => {
-    const { saveEmail, history } = this.props;
+  handleSubmit = () => {
+    const { isValidEmail } = this.state;
+    const { history } = this.props;
+
+    if (isValidEmail) {
+      const { userId } = this.state;
+      history.push(`./carteira/${userId}`);
+    }
+  };
+
+  handleValidation = () => {
     const { email } = this.state;
+    const { users } = this.props;
+    const user = users.find(({ email: userEmail }) => userEmail === email);
+    const isValidEmail = user !== undefined;
+    const userId = isValidEmail ? user.id : null;
 
-    saveEmail(email);
-    history.push('./carteira');
-  };
-
-  loginValidation = () => {
-    const { email, password } = this.state;
-
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.(com|com\.br|net)$/;
-    const minPasswordLength = 5;
-
-    const validations = [
-      emailRegex.test(email),
-      password.length > minPasswordLength,
-    ];
-    const isValidLogin = validations.every((validation) => validation);
-
-    this.setState({ isValidLogin });
+    this.setState({ isValidEmail, userId }, this.handleSubmit);
   };
 
   render() {
-    const { email, password, isValidLogin } = this.state;
+    const { email, isValidEmail } = this.state;
     return (
       <div className="login-page">
 
         <div className="login-box">
-          <h1 className="login-title">Login</h1>
+          <h2 className="login-title">Insira o email cadastrado</h2>
 
           <div className="inputs-container">
             <input
@@ -55,26 +51,17 @@ class Login extends React.Component {
               value={ email }
               placeholder="Email"
               data-testid="email-input"
-              onChange={ this.handleChangeInput }
-            />
-            <input
-              type="password"
-              name="password"
-              value={ password }
-              placeholder="******"
-              data-testid="password-input"
-              onChange={ this.handleChangeInput }
+              onChange={ this.handleChange }
             />
           </div>
           <button
             type="button"
-            disabled={ !isValidLogin }
-            onClick={ this.handleClick }
+            onClick={ this.handleValidation }
           >
             Entrar
-
           </button>
           <Link to="/novo-usuario">Criar usuário</Link>
+          {!isValidEmail && <h3 className="field-warning">Email inválido</h3>}
         </div>
 
       </div>
@@ -86,11 +73,11 @@ Login.propTypes = {
   history: PropTypes.shape({
     push: PropTypes.func,
   }).isRequired,
-  saveEmail: PropTypes.func.isRequired,
+  users: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
 };
 
-const mapDispatchToProps = (dispatch) => ({
-  saveEmail: (email) => dispatch(getEmail(email)),
+const mapStateToProps = ({ user }) => ({
+  users: user.users,
 });
 
-export default connect(null, mapDispatchToProps)(Login);
+export default connect(mapStateToProps)(Login);

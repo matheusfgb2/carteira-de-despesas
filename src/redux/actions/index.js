@@ -1,18 +1,18 @@
 // user actions
 export const CREATE_USER = 'CREATE_USER';
-export const GET_EMAIL = 'GET_EMAIL';
+export const GET_USER = 'GET_USER';
 
 export const createUser = (userData) => ({
   type: CREATE_USER,
   payload: {
     ...userData,
-    id: 0,
+    id: '0',
   },
 });
 
-export const getEmail = (email) => ({
-  type: GET_EMAIL,
-  payload: email,
+export const getUser = (userId) => ({
+  type: GET_USER,
+  payload: userId,
 });
 
 // wallet actions
