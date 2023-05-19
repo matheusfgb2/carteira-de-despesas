@@ -1,5 +1,14 @@
 // user actions
+export const CREATE_USER = 'CREATE_USER';
 export const GET_EMAIL = 'GET_EMAIL';
+
+export const createUser = (userData) => ({
+  type: CREATE_USER,
+  payload: {
+    ...userData,
+    id: 0,
+  },
+});
 
 export const getEmail = (email) => ({
   type: GET_EMAIL,

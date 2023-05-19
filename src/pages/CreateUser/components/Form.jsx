@@ -1,10 +1,11 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { thunkCurrenciesAndAddExpense } from '../../../redux/actions';
 
+import { thunkCurrenciesAndAddExpense, createUser } from '../../../redux/actions';
 import './Form.css';
 
+// Create User Form
 class Form extends Component {
   state = {
     name: '',
@@ -35,12 +36,20 @@ class Form extends Component {
     this.setState({ isValidName, isValidEmail, isValidUser });
   };
 
+  handleSubmitForm = (e) => {
+    e.preventDefault();
+    const { name, email, currency } = this.state;
+    const { newUser } = this.props;
+    const userData = { name, email, currency };
+    newUser(userData);
+  };
+
   render() {
     const { name, email, currency, isValidName, isValidEmail, isValidUser } = this.state;
     const { currencies } = this.props;
     return (
       <div>
-        <form>
+        <form onSubmit={ this.handleSubmitForm }>
           <label htmlFor="name">
             Nome
             <input
@@ -94,6 +103,7 @@ class Form extends Component {
 Form.propTypes = {
   currencies: PropTypes.arrayOf(PropTypes.string).isRequired,
   fetchCurrencies: PropTypes.func.isRequired,
+  newUser: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = ({ wallet }) => ({
@@ -102,6 +112,7 @@ const mapStateToProps = ({ wallet }) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   fetchCurrencies: () => dispatch(thunkCurrenciesAndAddExpense()),
+  newUser: (userData) => dispatch(createUser(userData)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Form);
