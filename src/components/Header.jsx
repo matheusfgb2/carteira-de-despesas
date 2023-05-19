@@ -9,9 +9,9 @@ class Header extends Component {
   getTotalOfExpenses = () => {
     const { expenses } = this.props;
     const totalOfExpenses = expenses.reduce((total, expense) => {
-      const { currency } = expense;
-      const rating = expense.exchangeRates[currency].ask;
-      const finalValue = Number(rating) * Number(expense.value);
+      const { currency, value } = expense;
+      const rating = Number(expense.exchangeRates[currency].ask);
+      const finalValue = rating * value;
       return (total + finalValue);
     }, 0);
 

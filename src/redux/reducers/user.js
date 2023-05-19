@@ -19,10 +19,9 @@ const user = (state = INITIAL_STATE, action) => {
     };
 
   case GET_USER:
-    console.log(action.payload);
     return {
       ...state,
-      currentUser: state.users.find(({ id }) => id == action.payload),
+      currentUser: state.users.find(({ id }) => id === action.payload),
     };
 
   default:

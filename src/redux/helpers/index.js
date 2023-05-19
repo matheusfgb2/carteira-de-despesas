@@ -1,5 +1,5 @@
 export function updateExpenses(expenses, expenseId, expenseData = undefined) {
-  let expensesCopy = [...expenses];
+  const expensesCopy = [...expenses];
   if (expenseData) {
     const { description, tag, value, method, currency } = expenseData;
     const expenseToEdit = expensesCopy.find(({ id }) => id === expenseId);
@@ -8,8 +8,7 @@ export function updateExpenses(expenses, expenseId, expenseData = undefined) {
     expenseToEdit.value = value;
     expenseToEdit.method = method;
     expenseToEdit.currency = currency;
-  } else {
-    expensesCopy = expensesCopy.filter(({ id }) => id !== expenseId);
+    return expensesCopy;
   }
-  return expensesCopy;
+  return expensesCopy.filter(({ id }) => id !== expenseId);
 }

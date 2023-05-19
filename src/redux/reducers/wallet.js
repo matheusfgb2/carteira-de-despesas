@@ -8,9 +8,8 @@ import { updateExpenses } from '../helpers';
 const INITIAL_STATE = {
   currencies: [],
   expenses: [],
-  totalOfExpenses: 0,
   editor: false,
-  idToEdit: 0,
+  idToEdit: '',
   isFetching: false,
   errorMessage: '',
 };

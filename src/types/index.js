@@ -18,11 +18,11 @@ export const exchangeRatesPropTypes = PropTypes.objectOf(
 
 export const expensePropTypes = PropTypes.shape(
   {
-    id: PropTypes.number,
+    id: PropTypes.string,
     description: PropTypes.string,
-    tag: PropTypes.string,
-    value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-    method: PropTypes.string,
+    category: PropTypes.string,
+    value: PropTypes.number,
+    payment: PropTypes.string,
     currency: PropTypes.string,
     exchangeRates: exchangeRatesPropTypes,
   },

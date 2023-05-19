@@ -63,6 +63,7 @@ export function thunkCurrenciesAndAddExpense(expenseData = undefined) {
       if (expenseData) {
         const expense = {
           ...expenseData,
+          value: Number(expenseData.value),
           exchangeRates,
         };
         dispatch(expenseSuccessful(expense));

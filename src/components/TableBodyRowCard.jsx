@@ -7,7 +7,8 @@ import { expensePropTypes } from '../types';
 class TableBodyRowCard extends Component {
   render() {
     const { expense, getIdToEditExpense, removeExpense } = this.props;
-    const { description, tag, method, value, currency, exchangeRates, id } = expense;
+    const { description, category, payment, value,
+      currency, exchangeRates, id } = expense;
     const currencyName = exchangeRates[currency].name;
     const currencyRate = Number(exchangeRates[currency].ask);
     const convertedValue = (value * currencyRate).toFixed(2);
@@ -17,8 +18,8 @@ class TableBodyRowCard extends Component {
     return (
       <tr>
         <td>{description}</td>
-        <td>{tag}</td>
-        <td>{method}</td>
+        <td>{category}</td>
+        <td>{payment}</td>
         <td>{fixedValue}</td>
         <td>{currencyName}</td>
         <td>{fixedCurRate}</td>
@@ -27,14 +28,12 @@ class TableBodyRowCard extends Component {
         <td>
           <button
             type="button"
-            data-testid="edit-btn"
             onClick={ () => getIdToEditExpense(id) }
           >
             Editar
           </button>
           <button
             type="button"
-            data-testid="delete-btn"
             onClick={ () => removeExpense(id) }
           >
             Excluir

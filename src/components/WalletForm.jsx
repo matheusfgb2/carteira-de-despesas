@@ -7,18 +7,18 @@ import { expensesPropTypes } from '../types';
 import './WalletForm.css';
 
 const paymentMethods = ['Dinheiro', 'Cartão de crédito', 'Cartão de débito'];
-const tags = ['Alimentação', 'Lazer', 'Trabalho', 'Transporte', 'Saúde'];
+const categories = ['Alimentação', 'Lazer', 'Trabalho', 'Transporte', 'Saúde'];
 
 const defaultPayment = paymentMethods[0];
-const defaultTag = tags[0];
+const defaultCategory = categories[0];
 const defaultCurrency = 'USD';
 const idLength = 6;
 
 const defaultState = {
   description: '',
-  tag: defaultTag,
-  value: '',
-  method: defaultPayment,
+  category: defaultCategory,
+  value: 0,
+  payment: defaultPayment,
   currency: defaultCurrency,
   isFormIncomplete: true,
 };
@@ -33,31 +33,28 @@ class WalletForm extends Component {
 
   componentDidUpdate(prevProps) {
     const { expenseId, isEditMode, expenses } = this.props;
-
     if (isEditMode && !prevProps.isEditMode) {
       const expenseCopy = { ...expenses.find(({ id }) => id === expenseId) };
-      const { id, description, tag, value, method, currency } = expenseCopy;
-      this.setState({ id, description, tag, value, method, currency });
+      const { id, description, category, value, payment, currency } = expenseCopy;
+      this.setState({ id, description, category, value, payment, currency });
     }
   }
 
-  handleChangeForm = ({ target }) => {
+  handleChange = ({ target }) => {
     const { name, value } = target;
-    this.setState({ [name]: value }, this.validateForm);
+    this.setState({ [name]: value }, this.handleValidation);
   };
 
-  validateForm = () => {
-    const { description, value } = this.state;
-    this.setState({
-      isFormIncomplete: !(description.length && value > 0),
-    });
+  handleValidation = () => {
+    const { value } = this.state;
+    this.setState({ isFormIncomplete: value <= 0 });
   };
 
   handleSubmitForm = async (e) => {
     e.preventDefault();
     const { isEditMode } = this.props;
-    const { id, description, tag, value, method, currency } = this.state;
-    const expenseData = { id, description, tag, value, method, currency };
+    const { id, description, category, value, payment, currency } = this.state;
+    const expenseData = { id, description, category, value, payment, currency };
 
     if (isEditMode) {
       const { saveUpdatedExpense } = this.props;
@@ -79,7 +76,8 @@ class WalletForm extends Component {
 
   render() {
     const { isEditMode, currencies } = this.props;
-    const { description, value, currency, tag, method, isFormIncomplete } = this.state;
+    const { description, value, currency,
+      category, payment, isFormIncomplete } = this.state;
 
     return (
       <div className="wallet-form">
@@ -92,43 +90,40 @@ class WalletForm extends Component {
               type="text"
               name="description"
               id="description"
-              data-testid="description-input"
               value={ description }
-              onChange={ this.handleChangeForm }
+              onChange={ this.handleChange }
             />
           </label>
-          <label htmlFor="tag">
+          <label htmlFor="category">
             Categoria:
             <select
-              name="tag"
-              id="tag"
-              data-testid="tag-input"
-              value={ tag }
-              onChange={ this.handleChangeForm }
+              name="category"
+              id="category"
+              value={ category }
+              onChange={ this.handleChange }
             >
-              {tags.map((category) => (
-                <option key={ category } value={ category }>{category}</option>))}
+              {categories.map((tag) => (
+                <option key={ tag } value={ tag }>{tag}</option>))}
             </select>
           </label>
           <label htmlFor="value">
             Valor:
             <input
               type="number"
+              min="0"
               name="value"
               id="value"
-              data-testid="value-input"
               value={ value }
-              onChange={ this.handleChangeForm }
+              onChange={ this.handleChange }
             />
           </label>
-          <label htmlFor="method">
+          <label htmlFor="payment">
             Método de pagamento:
             <select
-              name="method"
-              id="method"
-              data-testid="method-input"
-              value={ method }
-              onChange={ this.handleChangeForm }
+              name="payment"
+              id="payment"
+              value={ payment }
+              onChange={ this.handleChange }
             >
               {paymentMethods.map((paymentMethod) => (
                 <option
@@ -144,9 +139,8 @@ class WalletForm extends Component {
             <select
               name="currency"
               id="currency"
-              data-testid="currency-input"
               value={ currency }
-              onChange={ this.handleChangeForm }
+              onChange={ this.handleChange }
             >
               {currencies.map((coin) => (
                 <option key={ coin } value={ coin }>{coin}</option>))}
