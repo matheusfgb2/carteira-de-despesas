@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
 import { getEmail } from '../redux/actions';
 import './Login.css';
 
@@ -73,6 +74,7 @@ class Login extends React.Component {
             Entrar
 
           </button>
+          <Link to="/novo-usuario">Criar usuário</Link>
         </div>
 
       </div>
