@@ -34,16 +34,14 @@ class Header extends Component {
   }
 }
 
-setTimeout(() => {
-  Header.propTypes = {
-    expenses: expensesPropTypes.isRequired,
-    user: PropTypes.shape({
-      currency: PropTypes.string,
-      email: PropTypes.string,
-      name: PropTypes.string,
-    }).isRequired,
-  };
-}, 1);
+Header.propTypes = {
+  expenses: expensesPropTypes.isRequired,
+  user: PropTypes.shape({
+    currency: PropTypes.string,
+    email: PropTypes.string,
+    name: PropTypes.string,
+  }).isRequired,
+};
 
 const mapStateToProps = ({ users, wallet }) => ({
   user: users.userList.find(({ id }) => id === users.userId) || {},

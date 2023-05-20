@@ -14,7 +14,7 @@ const users = (state = INITIAL_STATE, action) => {
     );
     return {
       ...state,
-      users: [...state.userList, { ...action.payload }],
+      userList: [...state.userList, { ...action.payload }],
     };
   case GET_USER_ID:
     return {

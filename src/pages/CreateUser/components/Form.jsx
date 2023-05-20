@@ -42,9 +42,10 @@ class Form extends Component {
   handleSubmit = (e) => {
     e.preventDefault();
     const { id, name, email, currency } = this.state;
-    const { newUser } = this.props;
+    const { newUser, history } = this.props;
     const userData = { id, name, email, currency };
     newUser(userData);
+    history.push(`/carteira/${id}`);
   };
 
   render() {
@@ -106,6 +107,9 @@ class Form extends Component {
 Form.propTypes = {
   currencies: PropTypes.arrayOf(PropTypes.string).isRequired,
   fetchCurrencies: PropTypes.func.isRequired,
+  history: PropTypes.shape({
+    push: PropTypes.func,
+  }).isRequired,
   newUser: PropTypes.func.isRequired,
 };
 

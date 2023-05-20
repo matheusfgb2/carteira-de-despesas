@@ -9,21 +9,28 @@ import { getUserId } from '../redux/actions';
 import './Wallet.css';
 
 class Wallet extends React.Component {
+  state = {
+    doHaveUser: true,
+  };
+
   componentDidMount() {
     const { match: { params: { userId } },
-      getCurrentUserId } = this.props;
+      getCurrentUserId, users } = this.props;
+    const doHaveUser = users.some(({ id }) => id === userId);
+    this.setState({ doHaveUser });
     getCurrentUserId(userId);
   }
 
   render() {
     const { error } = this.props;
+    const { doHaveUser } = this.state;
 
     return (
       <div className="wallet-page">
 
-        { error ? (
+        { error || !doHaveUser ? (
           <div className="error-container">
-            <h1 className="error">{`Error: ${error}`}</h1>
+            <h1 className="error">{`Erro: ${error || 'Usuário inexistente'}`}</h1>
           </div>
         ) : (
           <>
@@ -50,7 +57,8 @@ Wallet.propTypes = {
   getCurrentUserId: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = ({ wallet }) => ({
+const mapStateToProps = ({ users, wallet }) => ({
+  users: users.userList,
   error: wallet.errorMessage,
 });
 
