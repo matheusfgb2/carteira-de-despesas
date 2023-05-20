@@ -1,4 +1,4 @@
-// user actions
+// users actions
 export const CREATE_USER = 'CREATE_USER';
 export const GET_USER = 'GET_USER';
 
@@ -13,9 +13,15 @@ export const getUser = (userId) => ({
 });
 
 // wallet actions
+export const GET_USER_ID = 'GET_USER_ID';
 export const SAVE_EDITED_EXPENSE = 'SAVE_EDITED_EXPENSE';
 export const GET_ID_TO_EDIT = 'GET_ID_TO_EDIT';
 export const DELETE_EXPENSE = 'DELETE_EXPENSE';
+
+export const getUserId = (userId) => ({
+  type: GET_USER_ID,
+  payload: userId,
+});
 
 export const saveEditedExpense = (expenseData) => ({
   type: SAVE_EDITED_EXPENSE,

@@ -19,18 +19,14 @@ class Header extends Component {
   };
 
   render() {
-    const { email } = this.props;
+    const { name, email, currency } = this.props;
     const totalOfExpenses = this.getTotalOfExpenses();
     return (
       <div className="header-container">
         <img src={ logo } alt="Wallet" className="header-logo" />
         <div className="user-info-container">
-          <p data-testid="email-field">{`Email: ${email}`}</p>
-          <p>
-            {'Despesa total: '}
-            <span data-testid="total-field">{totalOfExpenses}</span>
-            <span data-testid="header-currency-field"> BRL</span>
-          </p>
+          <p>{`${name} | ${email}`}</p>
+          <p>{`Despesa total: ${totalOfExpenses} ${currency}`}</p>
         </div>
       </div>
     );
@@ -38,12 +34,16 @@ class Header extends Component {
 }
 
 Header.propTypes = {
+  currency: PropTypes.string.isRequired,
   email: PropTypes.string.isRequired,
   expenses: expensesPropTypes.isRequired,
+  name: PropTypes.string.isRequired,
 };
 
-const mapStateToProps = ({ user, wallet }) => ({
-  email: user.email,
+const mapStateToProps = ({ users, wallet }) => ({
+  email: users.user.email,
+  name: users.user.name,
+  currency: users.user.currency,
   expenses: wallet.expenses,
 });
 

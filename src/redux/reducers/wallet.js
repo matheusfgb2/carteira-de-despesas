@@ -1,6 +1,6 @@
 import {
   REQUEST_STARTED, CURRENCIES_SUCCESSFUL, EXPENSE_SUCCESSFUL, REQUEST_FAILED,
-  SAVE_EDITED_EXPENSE, GET_ID_TO_EDIT, DELETE_EXPENSE,
+  SAVE_EDITED_EXPENSE, GET_ID_TO_EDIT, DELETE_EXPENSE, GET_USER_ID,
 } from '../actions';
 
 import { updateExpenses } from '../helpers';
@@ -12,6 +12,7 @@ const INITIAL_STATE = {
   idToEdit: '',
   isFetching: false,
   errorMessage: '',
+  userId: '',
 };
 
 const wallet = (state = INITIAL_STATE, action) => {
@@ -29,11 +30,16 @@ const wallet = (state = INITIAL_STATE, action) => {
     return {
       ...state,
       isFetching: false,
-      expenses: [...state.expenses, action.payload],
+      expenses: updateExpenses(state.userId, state.expenses, null, action.payload),
     };
   case REQUEST_FAILED:
     return { ...state, isFetching: false, errorMessage: action.payload };
-
+  case GET_USER_ID:
+    return {
+      ...state,
+      userId: action.payload,
+      expenses: JSON.parse(localStorage.getItem(action.payload)) || [],
+    };
   case GET_ID_TO_EDIT:
     return {
       ...state,
@@ -44,12 +50,14 @@ const wallet = (state = INITIAL_STATE, action) => {
     return {
       ...state,
       editor: false,
-      expenses: updateExpenses(state.expenses, state.idToEdit, action.payload),
+      expenses: (
+        updateExpenses(state.userId, state.expenses, state.idToEdit, action.payload)
+      ),
     };
   case DELETE_EXPENSE:
     return {
       ...state,
-      expenses: updateExpenses(state.expenses, action.payload),
+      expenses: updateExpenses(state.userId, state.expenses, action.payload),
     };
   default:
     return state;

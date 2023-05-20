@@ -50,7 +50,7 @@ class WalletForm extends Component {
     this.setState({ isFormIncomplete: value <= 0 });
   };
 
-  handleSubmitForm = async (e) => {
+  handleSubmit = async (e) => {
     e.preventDefault();
     const { isEditMode } = this.props;
     const { id, description, category, value, payment, currency } = this.state;
@@ -63,7 +63,6 @@ class WalletForm extends Component {
       const { fetchCurrenciesAndAddExpense } = this.props;
       await fetchCurrenciesAndAddExpense(expenseData);
     }
-
     this.resetLocalState(isEditMode);
   };
 
@@ -81,7 +80,7 @@ class WalletForm extends Component {
 
     return (
       <div className="wallet-form">
-        <form className="form-container" onSubmit={ this.handleSubmitForm }>
+        <form className="form-container" onSubmit={ this.handleSubmit }>
           <h2 className="form-title">Despesa</h2>
           <hr />
           <label htmlFor="description">
@@ -169,11 +168,12 @@ WalletForm.propTypes = {
   saveUpdatedExpense: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = ({ wallet }) => ({
+const mapStateToProps = ({ users, wallet }) => ({
   currencies: wallet.currencies,
   expenses: wallet.expenses,
   isEditMode: wallet.editor,
   expenseId: wallet.idToEdit,
+  userId: users.user.id,
 });
 
 const mapDispatchToProps = (dispatch) => ({

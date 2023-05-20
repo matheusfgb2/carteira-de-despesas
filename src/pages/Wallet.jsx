@@ -5,13 +5,15 @@ import Header from '../components/Header';
 import WalletForm from '../components/WalletForm';
 import Table from '../components/Table';
 
-import { getUser } from '../redux/actions';
+import { getUser, getUserId } from '../redux/actions';
 import './Wallet.css';
 
 class Wallet extends React.Component {
   componentDidMount() {
-    const { match: { params: { userId } }, getCurrentUser } = this.props;
+    const { match: { params: { userId } },
+      getCurrentUser, getCurrentUserId } = this.props;
     getCurrentUser(userId);
+    getCurrentUserId(userId);
   }
 
   render() {
@@ -47,6 +49,7 @@ Wallet.propTypes = {
       userId: PropTypes.string,
     }),
   }).isRequired,
+  getCurrentUserId: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = ({ wallet }) => ({
@@ -55,6 +58,7 @@ const mapStateToProps = ({ wallet }) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   getCurrentUser: (userId) => dispatch(getUser(userId)),
+  getCurrentUserId: (userId) => dispatch(getUserId(userId)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Wallet);

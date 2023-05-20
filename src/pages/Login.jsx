@@ -75,8 +75,8 @@ Login.propTypes = {
   users: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
 };
 
-const mapStateToProps = ({ user }) => ({
-  users: user.users,
+const mapStateToProps = ({ users }) => ({
+  users: users.userList,
 });
 
 export default connect(mapStateToProps)(Login);
