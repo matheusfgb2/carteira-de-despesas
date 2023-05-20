@@ -10,7 +10,7 @@ function saveEditedExpense(userId, expenses, expenseId, expenseData) {
   const expenseToEdit = expensesCopy.find(({ id }) => id === expenseId);
   expenseToEdit.description = description;
   expenseToEdit.tag = tag;
-  expenseToEdit.value = value;
+  expenseToEdit.value = Number(value);
   expenseToEdit.method = method;
   expenseToEdit.currency = currency;
   localStorage.setItem(userId, JSON.stringify(expensesCopy));
@@ -24,14 +24,11 @@ function saveWithoutRemovedExpense(userId, expenses, expenseId) {
 }
 
 export function updateExpenses(
-  userId,
+  { userId, expenseData = undefined, idToRemove = undefined },
   expenses,
-  expenseId = undefined,
-  expenseData = undefined,
+  idToEdit = undefined,
 ) {
-  if (!expenseId && expenseData) return saveNewExpense(userId, expenses, expenseData);
-
-  if (expenseData) return saveEditedExpense(userId, expenses, expenseId, expenseData);
-
-  return saveWithoutRemovedExpense(userId, expenses, expenseId);
+  if (!idToEdit && expenseData) return saveNewExpense(userId, expenses, expenseData);
+  if (expenseData) return saveEditedExpense(userId, expenses, idToEdit, expenseData);
+  return saveWithoutRemovedExpense(userId, expenses, idToRemove);
 }

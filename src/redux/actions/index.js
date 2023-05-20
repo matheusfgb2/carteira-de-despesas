@@ -1,41 +1,35 @@
 // users actions
 export const CREATE_USER = 'CREATE_USER';
-export const GET_USER = 'GET_USER';
+export const GET_USER_ID = 'GET_USER_ID';
 
 export const createUser = (userData) => ({
   type: CREATE_USER,
   payload: userData,
 });
 
-export const getUser = (userId) => ({
-  type: GET_USER,
-  payload: userId,
-});
-
-// wallet actions
-export const GET_USER_ID = 'GET_USER_ID';
-export const SAVE_EDITED_EXPENSE = 'SAVE_EDITED_EXPENSE';
-export const GET_ID_TO_EDIT = 'GET_ID_TO_EDIT';
-export const DELETE_EXPENSE = 'DELETE_EXPENSE';
-
 export const getUserId = (userId) => ({
   type: GET_USER_ID,
   payload: userId,
 });
 
-export const saveEditedExpense = (expenseData) => ({
+// wallet actions
+export const SAVE_EDITED_EXPENSE = 'SAVE_EDITED_EXPENSE';
+export const GET_ID_TO_EDIT = 'GET_ID_TO_EDIT';
+export const DELETE_EXPENSE = 'DELETE_EXPENSE';
+
+export const saveEditedExpense = (userId, expenseData) => ({
   type: SAVE_EDITED_EXPENSE,
-  payload: expenseData,
+  payload: { userId, expenseData },
 });
 
-export const getIdToEdit = (expenseId) => ({
+export const getIdToEdit = (IdToEdit) => ({
   type: GET_ID_TO_EDIT,
-  payload: expenseId,
+  payload: IdToEdit,
 });
 
-export const deleteExpense = (expenseId) => ({
+export const deleteExpense = (userId, idToRemove) => ({
   type: DELETE_EXPENSE,
-  payload: expenseId,
+  payload: { userId, idToRemove },
 });
 
 // thunkCurrenciesAndAddExpense
@@ -47,19 +41,22 @@ export const REQUEST_FAILED = 'REQUEST_FAILED';
 const requestStarted = () => ({
   type: REQUEST_STARTED,
 });
-const currenciesSuccessful = (currencies) => ({
+const currenciesSuccessful = (userId, currencies) => ({
   type: CURRENCIES_SUCCESSFUL,
-  payload: currencies,
+  payload: [userId, currencies],
 });
-const expenseSuccessful = (expense) => ({
+const expenseSuccessful = (userId, expenseData) => ({
   type: EXPENSE_SUCCESSFUL,
-  payload: expense,
+  payload: { userId, expenseData },
 });
 const requestFailed = (error) => ({
   type: REQUEST_FAILED, payload: error,
 });
 
-export function thunkCurrenciesAndAddExpense(expenseData = undefined) {
+export function thunkCurrenciesAndAddExpense(
+  userId,
+  expenseData = undefined,
+) {
   return async (dispatch) => {
     try {
       dispatch(requestStarted());
@@ -72,12 +69,12 @@ export function thunkCurrenciesAndAddExpense(expenseData = undefined) {
           value: Number(expenseData.value),
           exchangeRates,
         };
-        dispatch(expenseSuccessful(expense));
+        dispatch(expenseSuccessful(userId, expense));
         return;
       }
       const currencies = Object.keys(exchangeRates)
         .filter((currency) => currency !== 'USDT');
-      dispatch(currenciesSuccessful(currencies));
+      dispatch(currenciesSuccessful(userId, currencies));
     } catch (error) {
       dispatch(requestFailed(error.message));
     }

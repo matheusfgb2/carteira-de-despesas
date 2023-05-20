@@ -19,7 +19,8 @@ class Header extends Component {
   };
 
   render() {
-    const { name, email, currency } = this.props;
+    const { user } = this.props;
+    const { name, email, currency } = user;
     const totalOfExpenses = this.getTotalOfExpenses();
     return (
       <div className="header-container">
@@ -33,17 +34,19 @@ class Header extends Component {
   }
 }
 
-Header.propTypes = {
-  currency: PropTypes.string.isRequired,
-  email: PropTypes.string.isRequired,
-  expenses: expensesPropTypes.isRequired,
-  name: PropTypes.string.isRequired,
-};
+setTimeout(() => {
+  Header.propTypes = {
+    expenses: expensesPropTypes.isRequired,
+    user: PropTypes.shape({
+      currency: PropTypes.string,
+      email: PropTypes.string,
+      name: PropTypes.string,
+    }).isRequired,
+  };
+}, 1);
 
 const mapStateToProps = ({ users, wallet }) => ({
-  email: users.user.email,
-  name: users.user.name,
-  currency: users.user.currency,
+  user: users.userList.find(({ id }) => id === users.userId) || {},
   expenses: wallet.expenses,
 });
 

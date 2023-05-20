@@ -5,14 +5,13 @@ import Header from '../components/Header';
 import WalletForm from '../components/WalletForm';
 import Table from '../components/Table';
 
-import { getUser, getUserId } from '../redux/actions';
+import { getUserId } from '../redux/actions';
 import './Wallet.css';
 
 class Wallet extends React.Component {
   componentDidMount() {
     const { match: { params: { userId } },
-      getCurrentUser, getCurrentUserId } = this.props;
-    getCurrentUser(userId);
+      getCurrentUserId } = this.props;
     getCurrentUserId(userId);
   }
 
@@ -43,7 +42,6 @@ class Wallet extends React.Component {
 
 Wallet.propTypes = {
   error: PropTypes.string.isRequired,
-  getCurrentUser: PropTypes.func.isRequired,
   match: PropTypes.shape({
     params: PropTypes.shape({
       userId: PropTypes.string,
@@ -57,7 +55,6 @@ const mapStateToProps = ({ wallet }) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  getCurrentUser: (userId) => dispatch(getUser(userId)),
   getCurrentUserId: (userId) => dispatch(getUserId(userId)),
 });
 

@@ -1,8 +1,8 @@
-import { CREATE_USER, GET_USER } from '../actions';
+import { CREATE_USER, GET_USER_ID } from '../actions';
 
 const INITIAL_STATE = {
   userList: JSON.parse(localStorage.getItem('users')) || [],
-  user: {},
+  userId: '',
 };
 
 const users = (state = INITIAL_STATE, action) => {
@@ -16,13 +16,11 @@ const users = (state = INITIAL_STATE, action) => {
       ...state,
       users: [...state.userList, { ...action.payload }],
     };
-
-  case GET_USER:
+  case GET_USER_ID:
     return {
       ...state,
-      user: state.userList.find(({ id }) => id === action.payload),
+      userId: action.payload,
     };
-
   default:
     return state;
   }

@@ -6,7 +6,7 @@ import { expensePropTypes } from '../types';
 
 class TableBodyRowCard extends Component {
   render() {
-    const { expense, getIdToEditExpense, removeExpense } = this.props;
+    const { expense, userId, getIdToEditExpense, removeExpense } = this.props;
     const { description, category, payment, value,
       currency, exchangeRates, id } = expense;
     const currencyName = exchangeRates[currency].name;
@@ -14,7 +14,6 @@ class TableBodyRowCard extends Component {
     const convertedValue = (value * currencyRate).toFixed(2);
     const fixedCurRate = currencyRate.toFixed(2);
     const fixedValue = Number(value).toFixed(2);
-
     return (
       <tr>
         <td>{description}</td>
@@ -34,7 +33,7 @@ class TableBodyRowCard extends Component {
           </button>
           <button
             type="button"
-            onClick={ () => removeExpense(id) }
+            onClick={ () => removeExpense(userId, id) }
           >
             Excluir
           </button>
@@ -48,16 +47,18 @@ TableBodyRowCard.propTypes = {
   expense: expensePropTypes.isRequired,
   getIdToEditExpense: PropTypes.func.isRequired,
   removeExpense: PropTypes.func.isRequired,
+  userId: PropTypes.string.isRequired,
 };
 
-const mapStateToProps = ({ wallet }) => ({
+const mapStateToProps = ({ users, wallet }) => ({
   expenses: wallet.expenses,
   error: wallet.errorMessage,
+  userId: users.userId,
 });
 
 const mapDispatchToProps = (dispatch) => ({
   getIdToEditExpense: (expenseId) => dispatch(getIdToEdit(expenseId)),
-  removeExpense: (expenseId) => dispatch(deleteExpense(expenseId)),
+  removeExpense: (userId, expenseId) => dispatch(deleteExpense(userId, expenseId)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(TableBodyRowCard);
