@@ -1,9 +1,10 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+
 import TableBodyRowCard from './TableBodyRowCard';
-import './Table.css';
 import { expensesPropTypes } from '../types';
+import './Table.css';
 
 const tableHeaderContent = [
   'Descrição', 'Tag', 'Método de pagamento',

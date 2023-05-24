@@ -1,10 +1,10 @@
-function saveNewExpense(userId, expenses, expenseData) {
+const saveNewExpense = (userId, expenses, expenseData) => {
   const updatedExpenses = [...expenses, expenseData];
   localStorage.setItem(userId, JSON.stringify(updatedExpenses));
   return updatedExpenses;
-}
+};
 
-function saveEditedExpense(userId, expenses, expenseId, expenseData) {
+const saveEditedExpense = (userId, expenseId, expenses, expenseData) => {
   const expensesCopy = [...expenses];
   const { description, tag, value, method, currency } = expenseData;
   const expenseToEdit = expensesCopy.find(({ id }) => id === expenseId);
@@ -15,20 +15,23 @@ function saveEditedExpense(userId, expenses, expenseId, expenseData) {
   expenseToEdit.currency = currency;
   localStorage.setItem(userId, JSON.stringify(expensesCopy));
   return expensesCopy;
-}
+};
 
-function saveWithoutRemovedExpense(userId, expenses, expenseId) {
+const saveWithoutRemovedExpense = (userId, expenseId, expenses) => {
   const expensesCopy = expenses.filter(({ id }) => id !== expenseId);
   localStorage.setItem(userId, JSON.stringify(expensesCopy));
   return expensesCopy;
-}
+};
 
-export function updateExpenses(
-  { userId, expenseData = undefined, idToRemove = undefined },
-  expenses,
-  idToEdit = undefined,
-) {
-  if (!idToEdit && expenseData) return saveNewExpense(userId, expenses, expenseData);
-  if (expenseData) return saveEditedExpense(userId, expenses, idToEdit, expenseData);
-  return saveWithoutRemovedExpense(userId, expenses, idToRemove);
-}
+export const updateExpenses = (
+  { expenseData = undefined, idToRemove = undefined },
+  { idToEdit = undefined, expenses, walletUserId },
+) => {
+  if (!idToEdit && expenseData) {
+    return saveNewExpense(walletUserId, expenses, expenseData);
+  }
+  if (expenseData) {
+    return saveEditedExpense(walletUserId, idToEdit, expenses, expenseData);
+  }
+  return saveWithoutRemovedExpense(walletUserId, idToRemove, expenses);
+};

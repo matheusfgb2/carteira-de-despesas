@@ -1,25 +1,19 @@
-import { CREATE_USER, GET_USER_ID } from '../actions';
+import { CREATE_USER } from '../actions/actionTypes';
 
 const INITIAL_STATE = {
-  userList: JSON.parse(localStorage.getItem('users')) || [],
-  userId: '',
+  userList: JSON.parse(localStorage.getItem('user-list')) || [],
 };
 
 const users = (state = INITIAL_STATE, action) => {
   switch (action.type) {
   case CREATE_USER:
     localStorage.setItem(
-      'users',
+      'user-list',
       JSON.stringify([...state.userList, { ...action.payload }]),
     );
     return {
       ...state,
       userList: [...state.userList, { ...action.payload }],
-    };
-  case GET_USER_ID:
-    return {
-      ...state,
-      userId: action.payload,
     };
   default:
     return state;

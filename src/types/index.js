@@ -1,5 +1,14 @@
 import PropTypes from 'prop-types';
 
+export const userPropTypes = PropTypes.shape({
+  id: PropTypes.string,
+  currency: PropTypes.string,
+  email: PropTypes.string,
+  name: PropTypes.string,
+});
+
+export const userListPropTypes = PropTypes.arrayOf(userPropTypes);
+
 export const exchangeRatesPropTypes = PropTypes.objectOf(
   PropTypes.shape({
     code: PropTypes.string,

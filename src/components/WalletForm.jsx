@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { nanoid } from 'nanoid';
+
 import { thunkCurrenciesAndAddExpense, saveEditedExpense } from '../redux/actions';
 import { expensesPropTypes } from '../types';
 import './WalletForm.css';
@@ -28,8 +29,8 @@ class WalletForm extends Component {
 
   componentDidMount() {
     setTimeout(async () => {
-      const { fetchCurrenciesAndAddExpense, userId } = this.props;
-      await fetchCurrenciesAndAddExpense(userId);
+      const { fetchCurrencies } = this.props;
+      await fetchCurrencies();
     }, 1);
   }
 
@@ -54,16 +55,16 @@ class WalletForm extends Component {
 
   handleSubmit = async (e) => {
     e.preventDefault();
-    const { isEditMode, userId } = this.props;
+    const { isEditMode } = this.props;
     const { id, description, category, value, payment, currency } = this.state;
     const expenseData = { id, description, category, value, payment, currency };
 
     if (isEditMode) {
       const { saveUpdatedExpense } = this.props;
-      saveUpdatedExpense(userId, expenseData);
+      saveUpdatedExpense(expenseData);
     } else {
-      const { fetchCurrenciesAndAddExpense } = this.props;
-      await fetchCurrenciesAndAddExpense(userId, expenseData);
+      const { saveNewExpense } = this.props;
+      await saveNewExpense(expenseData);
     }
     this.resetLocalState(isEditMode);
   };
@@ -165,27 +166,23 @@ WalletForm.propTypes = {
   currencies: PropTypes.arrayOf(PropTypes.string).isRequired,
   expenseId: PropTypes.string.isRequired,
   expenses: expensesPropTypes.isRequired,
-  fetchCurrenciesAndAddExpense: PropTypes.func.isRequired,
+  fetchCurrencies: PropTypes.func.isRequired,
   isEditMode: PropTypes.bool.isRequired,
   saveUpdatedExpense: PropTypes.func.isRequired,
-  userId: PropTypes.string.isRequired,
+  saveNewExpense: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = ({ users, wallet }) => ({
+const mapStateToProps = ({ wallet }) => ({
   currencies: wallet.currencies,
   expenses: wallet.expenses,
-  isEditMode: wallet.editor,
+  isEditMode: wallet.isEditMode,
   expenseId: wallet.idToEdit,
-  userId: users.userId,
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  fetchCurrenciesAndAddExpense: (userId, stateData) => {
-    dispatch(thunkCurrenciesAndAddExpense(userId, stateData));
-  },
-  saveUpdatedExpense: (userId, expenseData) => {
-    dispatch(saveEditedExpense(userId, expenseData));
-  },
+  fetchCurrencies: () => dispatch(thunkCurrenciesAndAddExpense()),
+  saveNewExpense: (stateData) => dispatch(thunkCurrenciesAndAddExpense(stateData)),
+  saveUpdatedExpense: (expenseData) => dispatch(saveEditedExpense(expenseData)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(WalletForm);

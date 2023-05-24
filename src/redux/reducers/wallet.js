@@ -1,14 +1,15 @@
 import {
-  REQUEST_STARTED, CURRENCIES_SUCCESSFUL, EXPENSE_SUCCESSFUL, REQUEST_FAILED,
-  SAVE_EDITED_EXPENSE, GET_ID_TO_EDIT, DELETE_EXPENSE,
-} from '../actions';
+  REQUEST_STARTED, REQUEST_FAILED, GET_WALLET_USER_ID, GET_CURRENCIES,
+  GET_ID_TO_EDIT, SAVE_NEW_EXPENSE, SAVE_EDITED_EXPENSE, DELETE_EXPENSE,
+} from '../actions/actionTypes';
 
 import { updateExpenses } from '../helpers';
 
 const INITIAL_STATE = {
+  walletUserId: '',
   currencies: [],
   expenses: [],
-  editor: false,
+  isEditMode: false,
   idToEdit: '',
   isFetching: false,
   errorMessage: '',
@@ -18,40 +19,27 @@ const wallet = (state = INITIAL_STATE, action) => {
   switch (action.type) {
   case REQUEST_STARTED:
     return { ...state, isFetching: true };
-  case CURRENCIES_SUCCESSFUL:
-    return {
-      ...state,
-      isFetching: false,
-      currencies: action.payload[1],
-      expenses: JSON.parse(localStorage.getItem(action.payload[0])) || [],
-    };
-  case EXPENSE_SUCCESSFUL:
-    return {
-      ...state,
-      isFetching: false,
-      expenses: updateExpenses(action.payload, state.expenses),
-    };
   case REQUEST_FAILED:
     return { ...state, isFetching: false, errorMessage: action.payload };
+  case GET_WALLET_USER_ID:
+    return { ...state,
+      walletUserId: action.payload,
+      expenses: JSON.parse(localStorage.getItem(action.payload)) || [] };
+  case GET_CURRENCIES:
+    return { ...state, isFetching: false, currencies: action.payload };
   case GET_ID_TO_EDIT:
-    return {
-      ...state,
-      editor: true,
-      idToEdit: action.payload,
-    };
+    return { ...state, isEditMode: true, idToEdit: action.payload };
+  case SAVE_NEW_EXPENSE:
+    return { ...state,
+      isFetching: false,
+      expenses: updateExpenses(action.payload, state) };
   case SAVE_EDITED_EXPENSE:
-    return {
-      ...state,
-      editor: false,
-      expenses: updateExpenses(action.payload, state.expenses, state.idToEdit),
-      idToEdit: '',
-    };
+    return { ...state,
+      isEditMode: false,
+      expenses: updateExpenses(action.payload, state),
+      idToEdit: '' };
   case DELETE_EXPENSE:
-    console.log(state.idToEdit);
-    return {
-      ...state,
-      expenses: updateExpenses(action.payload, state.expenses),
-    };
+    return { ...state, expenses: updateExpenses(action.payload, state) };
   default:
     return state;
   }

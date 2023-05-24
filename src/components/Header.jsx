@@ -1,7 +1,7 @@
-import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { expensesPropTypes } from '../types';
+import { expensesPropTypes, userPropTypes } from '../types';
+
 import logo from '../assets/logo.png';
 import './Header.css';
 
@@ -36,15 +36,11 @@ class Header extends Component {
 
 Header.propTypes = {
   expenses: expensesPropTypes.isRequired,
-  user: PropTypes.shape({
-    currency: PropTypes.string,
-    email: PropTypes.string,
-    name: PropTypes.string,
-  }).isRequired,
+  user: userPropTypes.isRequired,
 };
 
 const mapStateToProps = ({ users, wallet }) => ({
-  user: users.userList.find(({ id }) => id === users.userId) || {},
+  user: users.userList.find(({ id }) => id === wallet.walletUserId) || {},
   expenses: wallet.expenses,
 });
 

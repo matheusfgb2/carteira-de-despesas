@@ -1,11 +1,12 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
+
 import Header from '../components/Header';
 import WalletForm from '../components/WalletForm';
 import Table from '../components/Table';
-
-import { getUserId } from '../redux/actions';
+import { getWalletUserId } from '../redux/actions';
+import { userListPropTypes } from '../types';
 import './Wallet.css';
 
 class Wallet extends React.Component {
@@ -15,10 +16,10 @@ class Wallet extends React.Component {
 
   componentDidMount() {
     const { match: { params: { userId } },
-      getCurrentUserId, users } = this.props;
-    const doHaveUser = users.some(({ id }) => id === userId);
+      getUserId, userList } = this.props;
+    const doHaveUser = userList.some(({ id }) => id === userId);
     this.setState({ doHaveUser });
-    getCurrentUserId(userId);
+    getUserId(userId);
   }
 
   render() {
@@ -54,16 +55,17 @@ Wallet.propTypes = {
       userId: PropTypes.string,
     }),
   }).isRequired,
-  getCurrentUserId: PropTypes.func.isRequired,
+  getUserId: PropTypes.func.isRequired,
+  userList: userListPropTypes.isRequired,
 };
 
 const mapStateToProps = ({ users, wallet }) => ({
-  users: users.userList,
+  userList: users.userList,
   error: wallet.errorMessage,
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  getCurrentUserId: (userId) => dispatch(getUserId(userId)),
+  getUserId: (userId) => dispatch(getWalletUserId(userId)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Wallet);
