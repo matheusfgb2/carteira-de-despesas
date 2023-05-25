@@ -76,13 +76,15 @@ const fetchExchangeRates = async (currencies, userCurrency) => {
       ...exchangeRates,
       [rate.code]: {
         ...rate,
+        name: `${rate.name.split('/')[0]} (${rate.code})`,
         namein: rate.name.split('/')[1],
       } };
   });
 
-  exchangeRates[userCurrency].name = userCurrency === 'USD'
-    ? exchangeRates.BRL.name.split('/')[1] : exchangeRates.USD.name.split('/')[1];
-  exchangeRates[userCurrency].namein = exchangeRates[userCurrency].name;
+  exchangeRates[userCurrency].name = (
+    userCurrency === 'USD' ? exchangeRates.BRL.namein : exchangeRates.USD.namein
+  );
+  exchangeRates[userCurrency].namein = '-';
 
   return exchangeRates;
 };

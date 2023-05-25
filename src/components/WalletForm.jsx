@@ -12,7 +12,7 @@ const categories = ['Alimentação', 'Lazer', 'Trabalho', 'Transporte', 'Saúde'
 
 const defaultPayment = paymentMethods[0];
 const defaultCategory = categories[0];
-const defaultCurrency = 'USD';
+const defaultCurrency = 'BRL';
 const idLength = 6;
 
 const defaultState = {
@@ -162,16 +162,18 @@ class WalletForm extends Component {
   }
 }
 
-WalletForm.propTypes = {
-  currencies: PropTypes.arrayOf(PropTypes.string).isRequired,
-  expenseId: PropTypes.string.isRequired,
-  expenses: expensesPropTypes.isRequired,
-  fetchWalletCurrencies: PropTypes.func.isRequired,
-  isEditMode: PropTypes.bool.isRequired,
-  saveUpdatedExpense: PropTypes.func.isRequired,
-  saveNewExpense: PropTypes.func.isRequired,
-  user: userPropTypes.isRequired,
-};
+setTimeout(() => {
+  WalletForm.propTypes = {
+    currencies: PropTypes.arrayOf(PropTypes.string).isRequired,
+    expenseId: PropTypes.string.isRequired,
+    expenses: expensesPropTypes.isRequired,
+    fetchWalletCurrencies: PropTypes.func.isRequired,
+    isEditMode: PropTypes.bool.isRequired,
+    saveUpdatedExpense: PropTypes.func.isRequired,
+    saveNewExpense: PropTypes.func.isRequired,
+    user: userPropTypes.isRequired,
+  };
+}, 1);
 
 const mapStateToProps = ({ users, wallet }) => ({
   currencies: wallet.currencies,
