@@ -1,18 +1,32 @@
 import {
-  getNewUserCurrencies, getWalletCurrencies, saveNewExpense, usersRequestFailed,
+  getUserCurrencies, getWalletCurrencies, saveNewExpense, usersRequestFailed,
   usersRequestStarted, walletRequestFailed, walletRequestStarted,
 } from '.';
 
 // users
-export const thunkNewUserCurrencies = () => async (dispatch) => {
+export const thunkUserCurrencies = () => async (dispatch) => {
   try {
     dispatch(usersRequestStarted());
-    const API_URL = 'https://economia.awesomeapi.com.br/json/all';
+    const API_URL = 'https://economia.awesomeapi.com.br/json/available';
     const request = await fetch(API_URL);
-    const exchangeRates = await request.json();
-    const currencies = ['BRL', ...Object.keys(exchangeRates)
-      .filter((currency) => currency !== 'USDT')];
-    dispatch(getNewUserCurrencies(currencies));
+    const rates = await request.json();
+    const ratesKeys = Object.keys(rates);
+
+    const repeatedCurrencies = ratesKeys.map((key) => (
+      { code: key.split('-')[1], name: rates[key].split('/')[1] }
+    ));
+
+    const currenciesCodes = [];
+
+    const currencies = repeatedCurrencies.filter((currency) => {
+      const isDuplicate = currenciesCodes.includes(currency.code);
+      if (!isDuplicate) {
+        currenciesCodes.push(currency.code);
+        return true;
+      }
+      return false;
+    });
+    dispatch(getUserCurrencies(currencies));
   } catch (error) {
     console.log(error);
     dispatch(usersRequestFailed(error.message));
@@ -24,12 +38,11 @@ const fetchWalletCurrencies = async (userCurrency) => {
   const API_URL = 'https://economia.awesomeapi.com.br/json/available';
   const request = await fetch(API_URL);
   const rates = await request.json();
-  const ratesCodes = Object.keys(rates);
+  const ratesKeys = Object.keys(rates);
   let currencyNames = '';
 
-  const currencies = ratesCodes.reduce((acc, key) => {
+  const currencies = ratesKeys.reduce((acc, key) => {
     const currencyCodes = key.split('-');
-    console.log(currencyCodes);
     const regexp = new RegExp(`\\b${userCurrency}\\b`, 'gi');
     const hasCurrencyInKey = regexp.test(currencyCodes[1]);
     if (hasCurrencyInKey) {
@@ -70,11 +83,6 @@ const fetchExpenseExchRates = async (currencies, userCurrency) => {
         namein: rate.name.split('/')[1],
       } };
   });
-
-  // exchangeRates[userCurrency].name = (
-  //   userCurrency === 'USD' ? exchangeRates.BRL.namein : exchangeRates.USD.namein
-  // );
-  // exchangeRates[userCurrency].namein = '-';
 
   return exchangeRates;
 };

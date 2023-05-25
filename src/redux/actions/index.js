@@ -1,6 +1,6 @@
 import {
   CREATE_USER, DELETE_EXPENSE, GET_ID_TO_EDIT,
-  GET_NEW_USER_CURRENCIES, GET_WALLET_CURRENCIES, GET_WALLET_USER_ID,
+  GET_USER_CURRENCIES, GET_WALLET_CURRENCIES, GET_WALLET_USER_ID,
   SAVE_EDITED_EXPENSE, SAVE_NEW_EXPENSE, USERS_REQUEST_FAILED,
   USERS_REQUEST_STARTED, WALLET_REQUEST_FAILED, WALLET_REQUEST_STARTED,
 } from './actionTypes';
@@ -12,8 +12,8 @@ export const usersRequestStarted = () => ({
 export const usersRequestFailed = (error) => ({
   type: USERS_REQUEST_FAILED, payload: error,
 });
-export const getNewUserCurrencies = (currencies) => ({
-  type: GET_NEW_USER_CURRENCIES,
+export const getUserCurrencies = (currencies) => ({
+  type: GET_USER_CURRENCIES,
   payload: currencies,
 });
 export const createUser = (userData) => ({

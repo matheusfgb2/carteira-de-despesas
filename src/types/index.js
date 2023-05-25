@@ -9,6 +9,13 @@ export const userPropTypes = PropTypes.shape({
 
 export const userListPropTypes = PropTypes.arrayOf(userPropTypes);
 
+export const currenciesPropTypes = PropTypes.arrayOf(
+  PropTypes.shape({
+    code: PropTypes.string,
+    name: PropTypes.string,
+  }),
+);
+
 export const exchangeRatesPropTypes = PropTypes.objectOf(
   PropTypes.shape({
     code: PropTypes.string,

@@ -5,7 +5,7 @@ import { nanoid } from 'nanoid';
 
 import { saveEditedExpense } from '../redux/actions';
 import { thunkCurrenciesAndAddExpense } from '../redux/actions/thunks';
-import { expensesPropTypes, userPropTypes } from '../types';
+import { currenciesPropTypes, expensesPropTypes, userPropTypes } from '../types';
 import './WalletForm.css';
 
 const paymentMethods = ['Dinheiro', 'Cartão de crédito', 'Cartão de débito'];
@@ -13,7 +13,6 @@ const categories = ['Alimentação', 'Lazer', 'Trabalho', 'Transporte', 'Saúde'
 
 const defaultPayment = paymentMethods[0];
 const defaultCategory = categories[0];
-const defaultCurrency = 'BRL';
 const idLength = 6;
 
 const defaultState = {
@@ -21,7 +20,7 @@ const defaultState = {
   category: defaultCategory,
   value: '',
   payment: defaultPayment,
-  currency: defaultCurrency,
+  currency: '',
   isFormIncomplete: true,
 };
 
@@ -32,6 +31,7 @@ class WalletForm extends Component {
     setTimeout(async () => {
       const { fetchWalletCurrencies, user } = this.props;
       await fetchWalletCurrencies(user.currency);
+      this.setState({ currency: user.currency });
     }, 1);
   }
 
@@ -71,9 +71,11 @@ class WalletForm extends Component {
   };
 
   resetLocalState = (isEditMode) => {
+    const { user } = this.props;
     this.setState((prevState) => ({
       id: isEditMode ? prevState.id : nanoid(idLength),
       ...defaultState,
+      currency: user.currency,
     }));
   };
 
@@ -165,7 +167,7 @@ class WalletForm extends Component {
 
 setTimeout(() => {
   WalletForm.propTypes = {
-    currencies: PropTypes.arrayOf(PropTypes.string).isRequired,
+    currencies: currenciesPropTypes.isRequired,
     expenseId: PropTypes.string.isRequired,
     expenses: expensesPropTypes.isRequired,
     fetchWalletCurrencies: PropTypes.func.isRequired,
