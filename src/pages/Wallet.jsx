@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import Header from '../components/Header';
 import WalletForm from '../components/WalletForm';
 import Table from '../components/Table';
-import { getWalletUserId } from '../redux/actions/wallet';
+import { getWalletUserId } from '../redux/actions';
 import { userListPropTypes } from '../types';
 import './Wallet.css';
 

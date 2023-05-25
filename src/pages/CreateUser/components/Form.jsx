@@ -3,7 +3,8 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { nanoid } from 'nanoid';
 
-import { createUser, thunkNewUserCurrencies } from '../../../redux/actions/users';
+import { createUser } from '../../../redux/actions';
+import { thunkNewUserCurrencies } from '../../../redux/actions/thunks';
 import { userListPropTypes } from '../../../types';
 import './Form.css';
 
@@ -14,7 +15,7 @@ class Form extends Component {
     id: nanoid(idLength),
     name: '',
     email: '',
-    currency: 'USD',
+    currency: 'BRL',
     isValidName: true,
     isValidEmail: true,
     isNewEmail: true,

@@ -3,7 +3,8 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { nanoid } from 'nanoid';
 
-import { thunkCurrenciesAndAddExpense, saveEditedExpense } from '../redux/actions/wallet';
+import { saveEditedExpense } from '../redux/actions';
+import { thunkCurrenciesAndAddExpense } from '../redux/actions/thunks';
 import { expensesPropTypes, userPropTypes } from '../types';
 import './WalletForm.css';
 
@@ -145,7 +146,7 @@ class WalletForm extends Component {
               onChange={ this.handleChange }
             >
               {currencies.map((coin) => (
-                <option key={ coin } value={ coin }>{coin}</option>))}
+                <option key={ coin.code } value={ coin.code }>{coin.name}</option>))}
             </select>
           </label>
           {isEditMode ? (
@@ -173,7 +174,7 @@ setTimeout(() => {
     saveNewExpense: PropTypes.func.isRequired,
     user: userPropTypes.isRequired,
   };
-}, 1);
+}, 100);
 
 const mapStateToProps = ({ users, wallet }) => ({
   currencies: wallet.currencies,

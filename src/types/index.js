@@ -19,7 +19,7 @@ export const exchangeRatesPropTypes = PropTypes.objectOf(
     varBid: PropTypes.string,
     pctChange: PropTypes.string,
     bid: PropTypes.string,
-    ask: PropTypes.string,
+    ask: PropTypes.number,
     timestamp: PropTypes.string,
     create_date: PropTypes.string,
   }),

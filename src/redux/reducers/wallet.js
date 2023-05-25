@@ -1,8 +1,7 @@
 import {
-  REQUEST_STARTED, REQUEST_FAILED, GET_WALLET_USER_ID, GET_WALLET_CURRENCIES,
-  GET_ID_TO_EDIT, SAVE_NEW_EXPENSE, SAVE_EDITED_EXPENSE, DELETE_EXPENSE,
+  DELETE_EXPENSE, GET_ID_TO_EDIT, GET_WALLET_CURRENCIES, GET_WALLET_USER_ID,
+  SAVE_EDITED_EXPENSE, SAVE_NEW_EXPENSE, WALLET_REQUEST_FAILED, WALLET_REQUEST_STARTED,
 } from '../actions/actionTypes';
-
 import { updateExpenses } from '../helpers';
 
 const INITIAL_STATE = {
@@ -17,9 +16,9 @@ const INITIAL_STATE = {
 
 const wallet = (state = INITIAL_STATE, action) => {
   switch (action.type) {
-  case REQUEST_STARTED:
+  case WALLET_REQUEST_STARTED:
     return { ...state, isFetching: true };
-  case REQUEST_FAILED:
+  case WALLET_REQUEST_FAILED:
     return { ...state, isFetching: false, errorMessage: action.payload };
   case GET_WALLET_USER_ID:
     return { ...state,
