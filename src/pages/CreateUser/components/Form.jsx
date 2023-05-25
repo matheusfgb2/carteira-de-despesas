@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { nanoid } from 'nanoid';
 
-import { thunkCurrenciesAndAddExpense, createUser } from '../../../redux/actions';
+import { createUser, thunkNewUserCurrencies } from '../../../redux/actions/users';
 import { userListPropTypes } from '../../../types';
 import './Form.css';
 
@@ -22,8 +22,8 @@ class Form extends Component {
   };
 
   async componentDidMount() {
-    const { fetchCurrencies } = this.props;
-    await fetchCurrencies();
+    const { fetchNewUserCurrencies } = this.props;
+    await fetchNewUserCurrencies();
   }
 
   handleChange = ({ target }) => {
@@ -122,7 +122,7 @@ class Form extends Component {
 
 Form.propTypes = {
   currencies: PropTypes.arrayOf(PropTypes.string).isRequired,
-  fetchCurrencies: PropTypes.func.isRequired,
+  fetchNewUserCurrencies: PropTypes.func.isRequired,
   history: PropTypes.shape({
     push: PropTypes.func,
   }).isRequired,
@@ -130,13 +130,13 @@ Form.propTypes = {
   userList: userListPropTypes.isRequired,
 };
 
-const mapStateToProps = ({ users, wallet }) => ({
-  currencies: wallet.currencies,
+const mapStateToProps = ({ users }) => ({
+  currencies: users.currencies,
   userList: users.userList,
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  fetchCurrencies: () => dispatch(thunkCurrenciesAndAddExpense()),
+  fetchNewUserCurrencies: () => dispatch(thunkNewUserCurrencies()),
   newUser: (userData) => dispatch(createUser(userData)),
 });
 

@@ -3,8 +3,8 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { nanoid } from 'nanoid';
 
-import { thunkCurrenciesAndAddExpense, saveEditedExpense } from '../redux/actions';
-import { expensesPropTypes } from '../types';
+import { thunkCurrenciesAndAddExpense, saveEditedExpense } from '../redux/actions/wallet';
+import { expensesPropTypes, userPropTypes } from '../types';
 import './WalletForm.css';
 
 const paymentMethods = ['Dinheiro', 'Cartão de crédito', 'Cartão de débito'];
@@ -29,8 +29,8 @@ class WalletForm extends Component {
 
   componentDidMount() {
     setTimeout(async () => {
-      const { fetchCurrencies } = this.props;
-      await fetchCurrencies();
+      const { fetchWalletCurrencies, user } = this.props;
+      await fetchWalletCurrencies(user.currency);
     }, 1);
   }
 
@@ -63,8 +63,8 @@ class WalletForm extends Component {
       const { saveUpdatedExpense } = this.props;
       saveUpdatedExpense(expenseData);
     } else {
-      const { saveNewExpense } = this.props;
-      await saveNewExpense(expenseData);
+      const { saveNewExpense, user } = this.props;
+      await saveNewExpense(user.currency, expenseData);
     }
     this.resetLocalState(isEditMode);
   };
@@ -166,22 +166,26 @@ WalletForm.propTypes = {
   currencies: PropTypes.arrayOf(PropTypes.string).isRequired,
   expenseId: PropTypes.string.isRequired,
   expenses: expensesPropTypes.isRequired,
-  fetchCurrencies: PropTypes.func.isRequired,
+  fetchWalletCurrencies: PropTypes.func.isRequired,
   isEditMode: PropTypes.bool.isRequired,
   saveUpdatedExpense: PropTypes.func.isRequired,
   saveNewExpense: PropTypes.func.isRequired,
+  user: userPropTypes.isRequired,
 };
 
-const mapStateToProps = ({ wallet }) => ({
+const mapStateToProps = ({ users, wallet }) => ({
   currencies: wallet.currencies,
   expenses: wallet.expenses,
   isEditMode: wallet.isEditMode,
   expenseId: wallet.idToEdit,
+  user: users.userList.find(({ id }) => id === wallet.walletUserId),
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  fetchCurrencies: () => dispatch(thunkCurrenciesAndAddExpense()),
-  saveNewExpense: (stateData) => dispatch(thunkCurrenciesAndAddExpense(stateData)),
+  fetchWalletCurrencies: (currency) => dispatch(thunkCurrenciesAndAddExpense(currency)),
+  saveNewExpense: (currency, stateData) => {
+    dispatch(thunkCurrenciesAndAddExpense(currency, stateData));
+  },
   saveUpdatedExpense: (expenseData) => dispatch(saveEditedExpense(expenseData)),
 });
 

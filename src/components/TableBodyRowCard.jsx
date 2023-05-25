@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { getIdToEdit, deleteExpense } from '../redux/actions';
+import { getIdToEdit, deleteExpense } from '../redux/actions/wallet';
 import { expensePropTypes } from '../types';
 
 class TableBodyRowCard extends Component {
@@ -10,11 +10,12 @@ class TableBodyRowCard extends Component {
     const { expense, getIdToEditExpense, removeExpense } = this.props;
     const { description, category, payment, value,
       currency, exchangeRates, id } = expense;
+    const fixedValue = Number(value).toFixed(2);
     const currencyName = exchangeRates[currency].name;
     const currencyRate = Number(exchangeRates[currency].ask);
-    const convertedValue = (value * currencyRate).toFixed(2);
     const fixedCurRate = currencyRate.toFixed(2);
-    const fixedValue = Number(value).toFixed(2);
+    const convertedValue = (value * currencyRate).toFixed(2);
+    const { namein } = exchangeRates[currency];
     return (
       <tr>
         <td>{description}</td>
@@ -24,7 +25,7 @@ class TableBodyRowCard extends Component {
         <td>{currencyName}</td>
         <td>{fixedCurRate}</td>
         <td>{convertedValue}</td>
-        <td>Real</td>
+        <td>{namein}</td>
         <td>
           <button
             type="button"
