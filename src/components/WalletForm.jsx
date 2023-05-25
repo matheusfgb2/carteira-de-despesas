@@ -148,7 +148,12 @@ class WalletForm extends Component {
               onChange={ this.handleChange }
             >
               {currencies.map((coin) => (
-                <option key={ coin.code } value={ coin.code }>{coin.name}</option>))}
+                <option
+                  key={ coin.code }
+                  value={ coin.code }
+                >
+                  {`${coin.name}${coin.code !== coin.name ? ` (${coin.code})` : ''}`}
+                </option>))}
             </select>
           </label>
           {isEditMode ? (

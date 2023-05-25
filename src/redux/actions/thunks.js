@@ -18,21 +18,23 @@ export const thunkUserCurrencies = () => async (dispatch) => {
 
     const currenciesCodes = [];
 
-    const currencies = repeatedCurrencies.filter((currency) => {
-      const isDuplicate = currenciesCodes.includes(currency.code);
-      if (!isDuplicate) {
-        currenciesCodes.push(currency.code);
-        return true;
-      }
-      return false;
-    });
+    const currencies = repeatedCurrencies
+      .filter((currency) => {
+        const isDuplicate = currenciesCodes.includes(currency.code);
+        if (!isDuplicate) {
+          currenciesCodes.push(currency.code);
+          return true;
+        }
+        return false;
+      })
+      .sort((a, b) => a.name.localeCompare(b.name));
+
     dispatch(getUserCurrencies(currencies));
   } catch (error) {
     console.log(error);
     dispatch(usersRequestFailed(error.message));
   }
 };
-
 // wallet
 const fetchWalletCurrencies = async (userCurrency) => {
   const API_URL = 'https://economia.awesomeapi.com.br/json/available';
@@ -41,21 +43,24 @@ const fetchWalletCurrencies = async (userCurrency) => {
   const ratesKeys = Object.keys(rates);
   let currencyNames = '';
 
-  const currencies = ratesKeys.reduce((acc, key) => {
-    const currencyCodes = key.split('-');
-    const regexp = new RegExp(`\\b${userCurrency}\\b`, 'gi');
-    const hasCurrencyInKey = regexp.test(currencyCodes[1]);
-    if (hasCurrencyInKey) {
-      currencyNames = rates[key].split('/');
-      const currency = { name: currencyNames[0], code: currencyCodes[0] };
-      return [...acc, currency];
-    }
-    return acc;
-  }, []);
-
+  const unsortedCurrencies = ratesKeys
+    .reduce((acc, key) => {
+      const currencyCodes = key.split('-');
+      const regexp = new RegExp(`\\b${userCurrency}\\b`, 'gi');
+      const hasCurrencyInKey = regexp.test(currencyCodes[1]);
+      if (hasCurrencyInKey) {
+        currencyNames = rates[key].split('/');
+        const currency = { name: currencyNames[0], code: currencyCodes[0] };
+        return [...acc, currency];
+      }
+      return acc;
+    }, []);
   const selfCurrency = { name: currencyNames[1], code: userCurrency };
 
-  return [selfCurrency, ...currencies];
+  const currencies = [selfCurrency, ...unsortedCurrencies]
+    .sort((a, b) => a.name.localeCompare(b.name));
+
+  return currencies;
 };
 
 const fetchExpenseExchRates = async (currencies, userCurrency) => {
