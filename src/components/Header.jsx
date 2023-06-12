@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
 import { expensesPropTypes, userPropTypes } from '../types';
 
 import logo from '../assets/logo.png';
@@ -24,7 +25,9 @@ class Header extends Component {
     const totalOfExpenses = this.getTotalOfExpenses();
     return (
       <div className="header-container">
-        <img src={ logo } alt="Wallet" className="header-logo" />
+        <Link to="/">
+          <img src={ logo } alt="Wallet" className="header-logo" />
+        </Link>
         <div className="user-info-container">
           <p>{`${name} | ${email}`}</p>
           <p>{`Despesa total: ${totalOfExpenses} ${currency}`}</p>

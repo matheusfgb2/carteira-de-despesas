@@ -11,13 +11,10 @@ export const thunkUserCurrencies = () => async (dispatch) => {
     const request = await fetch(API_URL);
     const rates = await request.json();
     const ratesKeys = Object.keys(rates);
-
     const repeatedCurrencies = ratesKeys.map((key) => (
       { code: key.split('-')[1], name: rates[key].split('/')[1] }
     ));
-
     const currenciesCodes = [];
-
     const currencies = repeatedCurrencies
       .filter((currency) => {
         const isDuplicate = currenciesCodes.includes(currency.code);
@@ -28,13 +25,13 @@ export const thunkUserCurrencies = () => async (dispatch) => {
         return false;
       })
       .sort((a, b) => a.name.localeCompare(b.name));
-
     dispatch(getUserCurrencies(currencies));
   } catch (error) {
     console.log(error);
     dispatch(usersRequestFailed(error.message));
   }
 };
+
 // wallet
 const fetchWalletCurrencies = async (userCurrency) => {
   const API_URL = 'https://economia.awesomeapi.com.br/json/available';
@@ -42,7 +39,6 @@ const fetchWalletCurrencies = async (userCurrency) => {
   const rates = await request.json();
   const ratesKeys = Object.keys(rates);
   let currencyNames = '';
-
   const unsortedCurrencies = ratesKeys
     .reduce((acc, key) => {
       const currencyCodes = key.split('-');
@@ -59,7 +55,6 @@ const fetchWalletCurrencies = async (userCurrency) => {
 
   const currencies = [selfCurrency, ...unsortedCurrencies]
     .sort((a, b) => a.name.localeCompare(b.name));
-
   return currencies;
 };
 
@@ -77,7 +72,6 @@ const fetchExpenseExchRates = async (currencies, userCurrency) => {
       return { ...currency, ask: 1 };
     }),
   );
-
   let exchangeRates = {};
   exchangeRatesList.forEach((rate) => {
     exchangeRates = {
@@ -88,7 +82,6 @@ const fetchExpenseExchRates = async (currencies, userCurrency) => {
         namein: rate.name.split('/')[1],
       } };
   });
-
   return exchangeRates;
 };
 
@@ -99,8 +92,6 @@ export const thunkCurrenciesAndAddExpense = (
   try {
     dispatch(walletRequestStarted());
     const currencies = await fetchWalletCurrencies(userCurrency);
-    dispatch(getWalletCurrencies(currencies));
-
     if (expenseData) {
       const exchangeRates = await fetchExpenseExchRates(currencies, userCurrency);
       const expense = {
@@ -111,6 +102,7 @@ export const thunkCurrenciesAndAddExpense = (
       dispatch(saveNewExpense(expense));
       return;
     }
+    dispatch(getWalletCurrencies(currencies));
   } catch (error) {
     console.log(error);
     dispatch(walletRequestFailed(error.message));

@@ -8,6 +8,9 @@ import { thunkCurrenciesAndAddExpense } from '../redux/actions/thunks';
 import { currenciesPropTypes, expensesPropTypes, userPropTypes } from '../types';
 import './WalletForm.css';
 
+const TIMEOUT_MOUNT_VALUE = 1;
+const TIMEOUT_PROPTYPES_VALUE = 100;
+
 const paymentMethods = ['Dinheiro', 'Cartão de crédito', 'Cartão de débito'];
 const categories = ['Alimentação', 'Lazer', 'Trabalho', 'Transporte', 'Saúde'];
 
@@ -32,7 +35,7 @@ class WalletForm extends Component {
       const { fetchWalletCurrencies, user } = this.props;
       await fetchWalletCurrencies(user.currency);
       this.setState({ currency: user.currency });
-    }, 1);
+    }, TIMEOUT_MOUNT_VALUE);
   }
 
   componentDidUpdate(prevProps) {
@@ -181,7 +184,7 @@ setTimeout(() => {
     saveNewExpense: PropTypes.func.isRequired,
     user: userPropTypes.isRequired,
   };
-}, 100);
+}, TIMEOUT_PROPTYPES_VALUE);
 
 const mapStateToProps = ({ users, wallet }) => ({
   currencies: wallet.currencies,
