@@ -3,16 +3,18 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { nanoid } from 'nanoid';
 
-import { createUser } from '../../../redux/actions';
+import { createUser, editUser, deleteUser } from '../../../redux/actions';
 import { thunkUserCurrencies } from '../../../redux/actions/thunks';
 import { currenciesPropTypes, userListPropTypes } from '../../../types';
 import './Form.css';
 
-const idLength = 10;
+const TIMEOUT_MOUNT_VALUE = 1;
+const ID_LENGHT = 10;
+const NAME_MIN_LENGTH = 3;
 
 class Form extends Component {
   state = {
-    id: nanoid(idLength),
+    id: nanoid(ID_LENGHT),
     name: '',
     email: '',
     currency: 'BRL',
@@ -22,9 +24,16 @@ class Form extends Component {
     isValidUser: false,
   };
 
-  async componentDidMount() {
-    const { fetchUserCurrencies } = this.props;
-    await fetchUserCurrencies();
+  componentDidMount() {
+    setTimeout(async () => {
+      const { fetchUserCurrencies, isEditUser, userList, userId } = this.props;
+      await fetchUserCurrencies();
+      if (isEditUser) {
+        const user = userList.find(({ id }) => id === userId);
+        const { id, name, currency, email } = user;
+        this.setState({ id, name, currency, email });
+      }
+    }, TIMEOUT_MOUNT_VALUE);
   }
 
   handleChange = ({ target }) => {
@@ -36,9 +45,9 @@ class Form extends Component {
     e.preventDefault();
     const { name, email } = this.state;
     const { userList } = this.props;
-    const nameMinLength = 3;
+
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.(com|com\.br|net)$/;
-    const isValidName = name.length >= nameMinLength;
+    const isValidName = name.length >= NAME_MIN_LENGTH;
     const isValidEmail = emailRegex.test(email);
     const isNewEmail = userList.every((user) => user.email !== email);
     const isValidUser = isValidName && isValidEmail && isNewEmail;
@@ -49,23 +58,43 @@ class Form extends Component {
       isValidUser }, this.handleSubmit);
   };
 
+  handleValidationEditMode = (e) => {
+    e.preventDefault();
+    const { name } = this.state;
+    const isValidName = name.length >= NAME_MIN_LENGTH;
+    this.setState({ isValidName, isValidUser: isValidName }, this.handleSubmit);
+  };
+
   handleSubmit = () => {
     const { isValidUser } = this.state;
     if (isValidUser) {
       const { id, name, email, currency } = this.state;
-      const { newUser, history } = this.props;
+      const { create, edit, isEditUser, history } = this.props;
       const userData = { id, name, email, currency };
-      newUser(userData);
+      if (isEditUser) {
+        edit(userData);
+      } else {
+        create(userData);
+      }
       history.push(`/carteira/${id}`);
     }
   };
 
+  handleRemoveUser = (id) => {
+    const { remove, history } = this.props;
+    remove(id);
+    history.push('/');
+  };
+
   render() {
-    const { name, email, currency, isValidName, isValidEmail, isNewEmail } = this.state;
-    const { currencies } = this.props;
+    const { id, name, email, currency,
+      isValidName, isValidEmail, isNewEmail } = this.state;
+    const { currencies, isEditUser } = this.props;
     return (
       <div>
-        <form onSubmit={ this.handleValidation }>
+        <form
+          onSubmit={ isEditUser ? this.handleValidationEditMode : this.handleValidation }
+        >
           <label htmlFor="name">
             Nome
             <input
@@ -76,16 +105,20 @@ class Form extends Component {
               onChange={ this.handleChange }
             />
           </label>
-          <label htmlFor="email">
-            Email
-            <input
-              type="text"
-              name="email"
-              id="email"
-              value={ email }
-              onChange={ this.handleChange }
-            />
-          </label>
+          {
+            !isEditUser && (
+              <label htmlFor="email">
+                Email
+                <input
+                  type="text"
+                  name="email"
+                  id="email"
+                  value={ email }
+                  onChange={ this.handleChange }
+                />
+              </label>
+            )
+          }
           <label htmlFor="currency">
             Moeda:
             <select
@@ -104,7 +137,7 @@ class Form extends Component {
                 </option>))}
             </select>
           </label>
-          <button type="submit">Criar usuário</button>
+          <button type="submit">{isEditUser ? 'Editar usuário' : 'Criar usuário'}</button>
         </form>
         {!isValidName && (
           <p className="field-warning">
@@ -121,6 +154,14 @@ class Form extends Component {
             Email já cadastrado
           </p>
         ) }
+        {isEditUser && (
+          <>
+            <button onClick={ () => this.handleRemoveUser(id) }>Deletar usuário</button>
+            <p className="field-warning">
+              A troca de moeda acarretará na remoçâo da lista de despesas
+            </p>
+          </>
+        )}
       </div>
     );
   }
@@ -128,11 +169,15 @@ class Form extends Component {
 
 Form.propTypes = {
   currencies: currenciesPropTypes.isRequired,
+  edit: PropTypes.func.isRequired,
   fetchUserCurrencies: PropTypes.func.isRequired,
   history: PropTypes.shape({
     push: PropTypes.func,
   }).isRequired,
-  newUser: PropTypes.func.isRequired,
+  isEditUser: PropTypes.bool.isRequired,
+  create: PropTypes.func.isRequired,
+  remove: PropTypes.func.isRequired,
+  userId: PropTypes.string.isRequired,
   userList: userListPropTypes.isRequired,
 };
 
@@ -143,7 +188,9 @@ const mapStateToProps = ({ users }) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   fetchUserCurrencies: () => dispatch(thunkUserCurrencies()),
-  newUser: (userData) => dispatch(createUser(userData)),
+  create: (userData) => dispatch(createUser(userData)),
+  edit: (userData) => dispatch(editUser(userData)),
+  remove: (userId) => dispatch(deleteUser(userId)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Form);

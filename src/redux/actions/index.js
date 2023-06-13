@@ -1,8 +1,8 @@
 import {
-  CREATE_USER, DELETE_EXPENSE, GET_ID_TO_EDIT,
+  CREATE_USER, EDIT_USER, DELETE_EXPENSE, GET_ID_TO_EDIT,
   GET_USER_CURRENCIES, GET_WALLET_CURRENCIES, GET_WALLET_USER_ID,
   SAVE_EDITED_EXPENSE, SAVE_NEW_EXPENSE, USERS_REQUEST_FAILED,
-  USERS_REQUEST_STARTED, WALLET_REQUEST_FAILED, WALLET_REQUEST_STARTED,
+  USERS_REQUEST_STARTED, WALLET_REQUEST_FAILED, WALLET_REQUEST_STARTED, DELETE_USER,
 } from './actionTypes';
 
 // users
@@ -18,7 +18,15 @@ export const getUserCurrencies = (currencies) => ({
 });
 export const createUser = (userData) => ({
   type: CREATE_USER,
-  payload: userData,
+  payload: { userData },
+});
+export const editUser = (userData) => ({
+  type: EDIT_USER,
+  payload: { userData },
+});
+export const deleteUser = (userId) => ({
+  type: DELETE_USER,
+  payload: { userId },
 });
 
 // wallet

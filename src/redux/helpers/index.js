@@ -1,3 +1,41 @@
+// users
+const createNewUser = (userData, stateUserList) => {
+  const updatedUserList = [...stateUserList, userData];
+  localStorage.setItem('user-list', JSON.stringify(updatedUserList));
+  return updatedUserList;
+};
+
+const removePrevUser = (userId) => {
+  const userList = JSON.parse(localStorage.getItem('user-list'));
+  const updatedUserList = userList.filter(({ id }) => id !== userId);
+  localStorage.setItem('user-list', JSON.stringify(updatedUserList));
+  localStorage.removeItem(userId);
+  return updatedUserList;
+};
+
+const editPrevUser = (userData) => {
+  const userList = JSON.parse(localStorage.getItem('user-list'));
+  const user = userList.find(({ id }) => id === userData.id);
+  if (user.currency !== userData.currency) {
+    localStorage.removeItem(user.id);
+  }
+  user.name = userData.name;
+  user.currency = userData.currency;
+  localStorage.setItem('user-list', JSON.stringify(userList));
+  return userList;
+};
+
+export const handleUsers = (userInfo, stateUserList = null) => {
+  if (stateUserList) {
+    return createNewUser(userInfo, stateUserList);
+  }
+  if (typeof userInfo === 'string') {
+    return removePrevUser(userInfo);
+  }
+  return editPrevUser(userInfo);
+};
+
+// wallet
 const saveNewExpense = (userId, expenses, expenseData) => {
   const updatedExpenses = [...expenses, expenseData];
   localStorage.setItem(userId, JSON.stringify(updatedExpenses));
@@ -23,7 +61,7 @@ const saveWithoutRemovedExpense = (userId, expenseId, expenses) => {
   return expensesCopy;
 };
 
-export const updateExpenses = (
+export const handleExpenses = (
   { expenseData = undefined, idToRemove = undefined },
   { idToEdit = undefined, expenses, walletUserId },
 ) => {

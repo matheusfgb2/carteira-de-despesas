@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
@@ -20,7 +21,7 @@ class Header extends Component {
   };
 
   render() {
-    const { user } = this.props;
+    const { user, userId } = this.props;
     const { name, email, currency } = user;
     const totalOfExpenses = this.getTotalOfExpenses();
     return (
@@ -31,6 +32,7 @@ class Header extends Component {
         <div className="user-info-container">
           <p>{`${name} | ${email}`}</p>
           <p>{`Despesa total: ${totalOfExpenses} ${currency}`}</p>
+          <Link to={ `/editar-usuario/${userId}` }>Editar Usuário</Link>
         </div>
       </div>
     );
@@ -40,11 +42,13 @@ class Header extends Component {
 Header.propTypes = {
   expenses: expensesPropTypes.isRequired,
   user: userPropTypes.isRequired,
+  userId: PropTypes.string.isRequired,
 };
 
 const mapStateToProps = ({ users, wallet }) => ({
   user: users.userList.find(({ id }) => id === wallet.walletUserId) || {},
   expenses: wallet.expenses,
+  userId: wallet.walletUserId,
 });
 
 export default connect(mapStateToProps)(Header);

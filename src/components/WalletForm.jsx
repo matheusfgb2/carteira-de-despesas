@@ -9,7 +9,6 @@ import { currenciesPropTypes, expensesPropTypes, userPropTypes } from '../types'
 import './WalletForm.css';
 
 const TIMEOUT_MOUNT_VALUE = 1;
-const TIMEOUT_PROPTYPES_VALUE = 100;
 
 const paymentMethods = ['Dinheiro', 'Cartão de crédito', 'Cartão de débito'];
 const categories = ['Alimentação', 'Lazer', 'Trabalho', 'Transporte', 'Saúde'];
@@ -173,25 +172,23 @@ class WalletForm extends Component {
   }
 }
 
-setTimeout(() => {
-  WalletForm.propTypes = {
-    currencies: currenciesPropTypes.isRequired,
-    expenseId: PropTypes.string.isRequired,
-    expenses: expensesPropTypes.isRequired,
-    fetchWalletCurrencies: PropTypes.func.isRequired,
-    isEditMode: PropTypes.bool.isRequired,
-    saveUpdatedExpense: PropTypes.func.isRequired,
-    saveNewExpense: PropTypes.func.isRequired,
-    user: userPropTypes.isRequired,
-  };
-}, TIMEOUT_PROPTYPES_VALUE);
+WalletForm.propTypes = {
+  currencies: currenciesPropTypes.isRequired,
+  expenseId: PropTypes.string.isRequired,
+  expenses: expensesPropTypes.isRequired,
+  fetchWalletCurrencies: PropTypes.func.isRequired,
+  isEditMode: PropTypes.bool.isRequired,
+  saveUpdatedExpense: PropTypes.func.isRequired,
+  saveNewExpense: PropTypes.func.isRequired,
+  user: userPropTypes.isRequired,
+};
 
 const mapStateToProps = ({ users, wallet }) => ({
   currencies: wallet.currencies,
   expenses: wallet.expenses,
   isEditMode: wallet.isEditMode,
   expenseId: wallet.idToEdit,
-  user: users.userList.find(({ id }) => id === wallet.walletUserId),
+  user: users.userList.find(({ id }) => id === wallet.walletUserId) || {},
 });
 
 const mapDispatchToProps = (dispatch) => ({

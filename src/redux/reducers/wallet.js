@@ -2,7 +2,7 @@ import {
   DELETE_EXPENSE, GET_ID_TO_EDIT, GET_WALLET_CURRENCIES, GET_WALLET_USER_ID,
   SAVE_EDITED_EXPENSE, SAVE_NEW_EXPENSE, WALLET_REQUEST_FAILED, WALLET_REQUEST_STARTED,
 } from '../actions/actionTypes';
-import { updateExpenses } from '../helpers';
+import { handleExpenses } from '../helpers';
 
 const INITIAL_STATE = {
   walletUserId: '',
@@ -31,14 +31,14 @@ const wallet = (state = INITIAL_STATE, action) => {
   case SAVE_NEW_EXPENSE:
     return { ...state,
       isFetching: false,
-      expenses: updateExpenses(action.payload, state) };
+      expenses: handleExpenses(action.payload, state) };
   case SAVE_EDITED_EXPENSE:
     return { ...state,
       isEditMode: false,
-      expenses: updateExpenses(action.payload, state),
+      expenses: handleExpenses(action.payload, state),
       idToEdit: '' };
   case DELETE_EXPENSE:
-    return { ...state, expenses: updateExpenses(action.payload, state) };
+    return { ...state, expenses: handleExpenses(action.payload, state) };
   default:
     return state;
   }
