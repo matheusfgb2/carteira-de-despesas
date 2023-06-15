@@ -4,8 +4,8 @@ import { connect } from 'react-redux';
 import { nanoid } from 'nanoid';
 
 import { createUser, editUser, deleteUser } from '../../../redux/actions';
-import { thunkUserCurrencies } from '../../../redux/actions/thunks';
-import { currenciesPropTypes, userListPropTypes } from '../../../types';
+import { fetchUserCurrencies } from '../../../services/api';
+import { userListPropTypes } from '../../../types';
 
 import '../style/UserForm.css';
 
@@ -15,6 +15,7 @@ const NAME_MIN_LENGTH = 3;
 
 class UserForm extends Component {
   state = {
+    userCurrencies: [],
     id: nanoid(ID_LENGHT),
     name: '',
     email: '',
@@ -27,8 +28,11 @@ class UserForm extends Component {
 
   componentDidMount() {
     setTimeout(async () => {
-      const { fetchUserCurrencies, isEditUser, userList, userId } = this.props;
-      await fetchUserCurrencies();
+      const { isEditUser, userList, userId } = this.props;
+
+      const userCurrencies = await fetchUserCurrencies();
+      this.setState({ userCurrencies });
+
       if (isEditUser) {
         const user = userList.find(({ id }) => id === userId);
         const { id, name, currency, email } = user;
@@ -62,35 +66,42 @@ class UserForm extends Component {
   handleValidationEditMode = (e) => {
     e.preventDefault();
     const { name } = this.state;
+
     const isValidName = name.length >= NAME_MIN_LENGTH;
     this.setState({ isValidName, isValidUser: isValidName }, this.handleSubmit);
   };
 
   handleSubmit = () => {
     const { isValidUser } = this.state;
+
     if (isValidUser) {
       const { id, name, email, currency } = this.state;
-      const { create, edit, isEditUser, history } = this.props;
+      const { createNewUser, editPrevUser, isEditUser, history } = this.props;
+
       const userData = { id, name, email, currency };
       if (isEditUser) {
-        edit(userData);
+        editPrevUser(userData);
       } else {
-        create(userData);
+        createNewUser(userData);
       }
+
       history.push(`/carteira/${id}`);
     }
   };
 
   handleRemoveUser = (id) => {
-    const { remove, history } = this.props;
-    remove(id);
+    const { deletePrevUser, history } = this.props;
+    deletePrevUser(id);
     history.push('/');
   };
 
   render() {
-    const { id, name, email, currency,
+    const { userCurrencies, id, name, email, currency,
       isValidName, isValidEmail, isNewEmail } = this.state;
-    const { currencies, isEditUser } = this.props;
+    const { isEditUser } = this.props;
+
+    if (userCurrencies.error) return <h1>{userCurrencies.error}</h1>;
+
     return (
       <div>
         <form
@@ -129,7 +140,7 @@ class UserForm extends Component {
               value={ currency }
               onChange={ this.handleChange }
             >
-              {currencies.map((coin) => (
+              {userCurrencies.map((coin) => (
                 <option
                   key={ coin.code }
                   value={ coin.code }
@@ -169,29 +180,25 @@ class UserForm extends Component {
 }
 
 UserForm.propTypes = {
-  currencies: currenciesPropTypes.isRequired,
-  edit: PropTypes.func.isRequired,
-  fetchUserCurrencies: PropTypes.func.isRequired,
+  createNewUser: PropTypes.func.isRequired,
+  deletePrevUser: PropTypes.func.isRequired,
+  editPrevUser: PropTypes.func.isRequired,
   history: PropTypes.shape({
     push: PropTypes.func,
   }).isRequired,
   isEditUser: PropTypes.bool.isRequired,
-  create: PropTypes.func.isRequired,
-  remove: PropTypes.func.isRequired,
   userId: PropTypes.string.isRequired,
   userList: userListPropTypes.isRequired,
 };
 
 const mapStateToProps = ({ users }) => ({
-  currencies: users.currencies,
   userList: users.userList,
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  fetchUserCurrencies: () => dispatch(thunkUserCurrencies()),
-  create: (userData) => dispatch(createUser(userData)),
-  edit: (userData) => dispatch(editUser(userData)),
-  remove: (userId) => dispatch(deleteUser(userId)),
+  createNewUser: (userData) => dispatch(createUser(userData)),
+  editPrevUser: (userData) => dispatch(editUser(userData)),
+  deletePrevUser: (userId) => dispatch(deleteUser(userId)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(UserForm);

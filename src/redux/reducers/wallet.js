@@ -1,7 +1,14 @@
 import {
-  DELETE_EXPENSE, GET_ID_TO_EDIT, GET_WALLET_CURRENCIES, GET_WALLET_USER_ID,
-  SAVE_EDITED_EXPENSE, SAVE_NEW_EXPENSE, WALLET_REQUEST_FAILED, WALLET_REQUEST_STARTED,
+  WALLET_REQUEST_STARTED,
+  WALLET_REQUEST_FAILED,
+  GET_WALLET_USER_ID,
+  GET_WALLET_CURRENCIES,
+  GET_EXPENSE_ID_TO_EDIT,
+  SAVE_NEW_EXPENSE,
+  SAVE_EDITED_EXPENSE,
+  DELETE_EXPENSE,
 } from '../actions/actionTypes';
+
 import { handleExpenses } from '../helpers';
 
 const INITIAL_STATE = {
@@ -26,7 +33,7 @@ const wallet = (state = INITIAL_STATE, action) => {
       expenses: JSON.parse(localStorage.getItem(action.payload)) || [] };
   case GET_WALLET_CURRENCIES:
     return { ...state, isFetching: false, currencies: action.payload };
-  case GET_ID_TO_EDIT:
+  case GET_EXPENSE_ID_TO_EDIT:
     return { ...state, isEditMode: true, idToEdit: action.payload };
   case SAVE_NEW_EXPENSE:
     return { ...state,

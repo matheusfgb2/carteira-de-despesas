@@ -1,21 +1,20 @@
+import { fetchExpenseExchRates, fetchWalletCurrencies } from '../../services/api';
+
 import {
-  CREATE_USER, EDIT_USER, DELETE_EXPENSE, GET_ID_TO_EDIT,
-  GET_USER_CURRENCIES, GET_WALLET_CURRENCIES, GET_WALLET_USER_ID,
-  SAVE_EDITED_EXPENSE, SAVE_NEW_EXPENSE, USERS_REQUEST_FAILED,
-  USERS_REQUEST_STARTED, WALLET_REQUEST_FAILED, WALLET_REQUEST_STARTED, DELETE_USER,
+  CREATE_USER,
+  EDIT_USER,
+  DELETE_USER,
+  DELETE_EXPENSE,
+  GET_WALLET_USER_ID,
+  WALLET_REQUEST_STARTED,
+  WALLET_REQUEST_FAILED,
+  GET_WALLET_CURRENCIES,
+  SAVE_NEW_EXPENSE,
+  GET_EXPENSE_ID_TO_EDIT,
+  SAVE_EDITED_EXPENSE,
 } from './actionTypes';
 
 // users
-export const usersRequestStarted = () => ({
-  type: USERS_REQUEST_STARTED,
-});
-export const usersRequestFailed = (error) => ({
-  type: USERS_REQUEST_FAILED, payload: error,
-});
-export const getUserCurrencies = (currencies) => ({
-  type: GET_USER_CURRENCIES,
-  payload: currencies,
-});
 export const createUser = (userData) => ({
   type: CREATE_USER,
   payload: { userData },
@@ -30,23 +29,13 @@ export const deleteUser = (userId) => ({
 });
 
 // wallet
-export const walletRequestStarted = () => ({
-  type: WALLET_REQUEST_STARTED,
-});
-export const walletRequestFailed = (error) => ({
-  type: WALLET_REQUEST_FAILED, payload: error,
-});
-export const getWalletCurrencies = (currencies) => ({
-  type: GET_WALLET_CURRENCIES,
-  payload: currencies,
-});
 export const getWalletUserId = (userId) => ({
   type: GET_WALLET_USER_ID,
   payload: userId,
 });
-export const getIdToEdit = (IdToEdit) => ({
-  type: GET_ID_TO_EDIT,
-  payload: IdToEdit,
+export const getExpenseIdToEdit = (idToEdit) => ({
+  type: GET_EXPENSE_ID_TO_EDIT,
+  payload: idToEdit,
 });
 export const saveNewExpense = (expenseData) => ({
   type: SAVE_NEW_EXPENSE,
@@ -60,3 +49,41 @@ export const deleteExpense = (idToRemove) => ({
   type: DELETE_EXPENSE,
   payload: { idToRemove },
 });
+
+const walletRequestStarted = () => ({
+  type: WALLET_REQUEST_STARTED,
+});
+const walletRequestFailed = (error) => ({
+  type: WALLET_REQUEST_FAILED, payload: error,
+});
+const getWalletCurrencies = (currencies) => ({
+  type: GET_WALLET_CURRENCIES,
+  payload: currencies,
+});
+
+export const thunkCurrenciesAndAddExpense = (
+  userCurrency,
+  expenseData = undefined,
+) => async (dispatch) => {
+  try {
+    dispatch(walletRequestStarted());
+
+    const currencies = await fetchWalletCurrencies(userCurrency);
+    if (expenseData) {
+      const exchangeRates = await fetchExpenseExchRates(currencies, userCurrency);
+
+      const expense = {
+        ...expenseData,
+        value: Number(expenseData.value),
+        exchangeRates,
+      };
+
+      dispatch(saveNewExpense(expense));
+      return;
+    }
+    dispatch(getWalletCurrencies(currencies));
+  } catch (error) {
+    console.log(error);
+    dispatch(walletRequestFailed(error.message));
+  }
+};

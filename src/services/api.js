@@ -1,20 +1,20 @@
-import {
-  getUserCurrencies, getWalletCurrencies, saveNewExpense, usersRequestFailed,
-  usersRequestStarted, walletRequestFailed, walletRequestStarted,
-} from '.';
+const fetchCurrencies = async () => {
+  const API_URL = 'https://economia.awesomeapi.com.br/json/available';
+  const request = await fetch(API_URL);
+  const currencies = await request.json();
+  return currencies;
+};
 
-// users
-export const thunkUserCurrencies = () => async (dispatch) => {
+export const fetchUserCurrencies = async () => {
   try {
-    dispatch(usersRequestStarted());
-    const API_URL = 'https://economia.awesomeapi.com.br/json/available';
-    const request = await fetch(API_URL);
-    const rates = await request.json();
+    const rates = await fetchCurrencies();
     const ratesKeys = Object.keys(rates);
+
     const repeatedCurrencies = ratesKeys.map((key) => (
       { code: key.split('-')[1], name: rates[key].split('/')[1] }
     ));
     const currenciesCodes = [];
+
     const currencies = repeatedCurrencies
       .filter((currency) => {
         const isDuplicate = currenciesCodes.includes(currency.code);
@@ -25,20 +25,19 @@ export const thunkUserCurrencies = () => async (dispatch) => {
         return false;
       })
       .sort((a, b) => a.name.localeCompare(b.name));
-    dispatch(getUserCurrencies(currencies));
+
+    return currencies;
   } catch (error) {
     console.log(error);
-    dispatch(usersRequestFailed(error.message));
+    return { error: error.message };
   }
 };
 
-// wallet
-const fetchWalletCurrencies = async (userCurrency) => {
-  const API_URL = 'https://economia.awesomeapi.com.br/json/available';
-  const request = await fetch(API_URL);
-  const rates = await request.json();
+export const fetchWalletCurrencies = async (userCurrency) => {
+  const rates = await fetchCurrencies();
   const ratesKeys = Object.keys(rates);
   let currencyNames = '';
+
   const unsortedCurrencies = ratesKeys
     .reduce((acc, key) => {
       const currencyCodes = key.split('-');
@@ -51,14 +50,16 @@ const fetchWalletCurrencies = async (userCurrency) => {
       }
       return acc;
     }, []);
+
   const selfCurrency = { name: currencyNames[1], code: userCurrency };
 
   const currencies = [selfCurrency, ...unsortedCurrencies]
     .sort((a, b) => a.name.localeCompare(b.name));
+
   return currencies;
 };
 
-const fetchExpenseExchRates = async (currencies, userCurrency) => {
+export const fetchExpenseExchRates = async (currencies, userCurrency) => {
   const exchangeRatesList = await Promise.all(
     currencies.map(async (currency) => {
       if (currency.code !== userCurrency) {
@@ -73,6 +74,7 @@ const fetchExpenseExchRates = async (currencies, userCurrency) => {
     }),
   );
   let exchangeRates = {};
+
   exchangeRatesList.forEach((rate) => {
     exchangeRates = {
       ...exchangeRates,
@@ -82,29 +84,6 @@ const fetchExpenseExchRates = async (currencies, userCurrency) => {
         namein: rate.name.split('/')[1],
       } };
   });
-  return exchangeRates;
-};
 
-export const thunkCurrenciesAndAddExpense = (
-  userCurrency,
-  expenseData = undefined,
-) => async (dispatch) => {
-  try {
-    dispatch(walletRequestStarted());
-    const currencies = await fetchWalletCurrencies(userCurrency);
-    if (expenseData) {
-      const exchangeRates = await fetchExpenseExchRates(currencies, userCurrency);
-      const expense = {
-        ...expenseData,
-        value: Number(expenseData.value),
-        exchangeRates,
-      };
-      dispatch(saveNewExpense(expense));
-      return;
-    }
-    dispatch(getWalletCurrencies(currencies));
-  } catch (error) {
-    console.log(error);
-    dispatch(walletRequestFailed(error.message));
-  }
+  return exchangeRates;
 };

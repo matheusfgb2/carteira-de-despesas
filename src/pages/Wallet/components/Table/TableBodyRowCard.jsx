@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { getIdToEdit, deleteExpense } from '../../../../redux/actions';
+import { getExpenseIdToEdit, deleteExpense } from '../../../../redux/actions';
 import { expensePropTypes } from '../../../../types';
 
 class TableBodyRowCard extends Component {
@@ -57,7 +57,7 @@ const mapStateToProps = ({ wallet }) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  getIdToEditExpense: (expenseId) => dispatch(getIdToEdit(expenseId)),
+  getIdToEditExpense: (expenseId) => dispatch(getExpenseIdToEdit(expenseId)),
   removeExpense: (expenseId) => dispatch(deleteExpense(expenseId)),
 });
 
