@@ -3,10 +3,10 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { nanoid } from 'nanoid';
 
-import { saveEditedExpense } from '../redux/actions';
-import { thunkCurrenciesAndAddExpense } from '../redux/actions/thunks';
-import { currenciesPropTypes, expensesPropTypes, userPropTypes } from '../types';
-import './WalletForm.css';
+import { saveEditedExpense } from '../../../redux/actions';
+import { thunkCurrenciesAndAddExpense } from '../../../redux/actions/thunks';
+import { currenciesPropTypes, expensesPropTypes, userPropTypes } from '../../../types';
+import '../style/WalletForm.css';
 
 const TIMEOUT_MOUNT_VALUE = 1;
 

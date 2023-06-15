@@ -2,10 +2,11 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { expensesPropTypes, userPropTypes } from '../types';
+import { expensesPropTypes, userPropTypes } from '../../../types';
 
-import logo from '../assets/logo.png';
-import './Header.css';
+import logo from '../../../assets/logo.png';
+
+import '../style/Header.css';
 
 class Header extends Component {
   getTotalOfExpenses = () => {

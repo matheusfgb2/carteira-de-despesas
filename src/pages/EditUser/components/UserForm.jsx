@@ -6,13 +6,14 @@ import { nanoid } from 'nanoid';
 import { createUser, editUser, deleteUser } from '../../../redux/actions';
 import { thunkUserCurrencies } from '../../../redux/actions/thunks';
 import { currenciesPropTypes, userListPropTypes } from '../../../types';
-import './Form.css';
+
+import '../style/UserForm.css';
 
 const TIMEOUT_MOUNT_VALUE = 1;
 const ID_LENGHT = 10;
 const NAME_MIN_LENGTH = 3;
 
-class Form extends Component {
+class UserForm extends Component {
   state = {
     id: nanoid(ID_LENGHT),
     name: '',
@@ -167,7 +168,7 @@ class Form extends Component {
   }
 }
 
-Form.propTypes = {
+UserForm.propTypes = {
   currencies: currenciesPropTypes.isRequired,
   edit: PropTypes.func.isRequired,
   fetchUserCurrencies: PropTypes.func.isRequired,
@@ -193,4 +194,4 @@ const mapDispatchToProps = (dispatch) => ({
   remove: (userId) => dispatch(deleteUser(userId)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(Form);
+export default connect(mapStateToProps, mapDispatchToProps)(UserForm);

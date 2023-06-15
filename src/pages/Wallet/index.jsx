@@ -2,12 +2,11 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import Header from '../components/Header';
-import WalletForm from '../components/WalletForm';
-import Table from '../components/Table';
-import { getWalletUserId } from '../redux/actions';
-import { userListPropTypes } from '../types';
-import './Wallet.css';
+import { getWalletUserId } from '../../redux/actions';
+import { userListPropTypes } from '../../types';
+
+import { Header, WalletForm, Table } from './components';
+import './style/Wallet.css';
 
 class Wallet extends React.Component {
   state = {

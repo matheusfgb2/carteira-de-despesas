@@ -2,8 +2,8 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { getIdToEdit, deleteExpense } from '../redux/actions';
-import { expensePropTypes } from '../types';
+import { getIdToEdit, deleteExpense } from '../../../../redux/actions';
+import { expensePropTypes } from '../../../../types';
 
 class TableBodyRowCard extends Component {
   render() {

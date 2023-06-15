@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import Form from './components/Form';
+
+import { UserForm } from './components';
 
 export default class CreateUser extends Component {
   state = {
@@ -19,7 +20,7 @@ export default class CreateUser extends Component {
     const { isEditUser, userId } = this.state;
     const { history } = this.props;
     return (
-      <Form history={ history } isEditUser={ isEditUser } userId={ userId } />
+      <UserForm history={ history } isEditUser={ isEditUser } userId={ userId } />
     );
   }
 }
