@@ -124,7 +124,7 @@ class WalletForm extends Component {
             />
           </label>
           <label htmlFor="payment">
-            Método de pagamento:
+            Pagamento:
             <select
               name="payment"
               id="payment"

@@ -53,12 +53,13 @@ class Login extends React.Component {
             />
           </div>
           <button
+            className="login-button"
             type="button"
             onClick={ this.handleValidation }
           >
             Entrar
           </button>
-          <Link to="/novo-usuario">Criar usuário</Link>
+          <Link to="/novo-usuario" className="create-user-link">Criar usuário</Link>
           {!isValidEmail && <h3 className="field-warning">Email inválido</h3>}
         </div>
 

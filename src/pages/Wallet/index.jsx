@@ -2,12 +2,11 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { Aside, AppShell, Header as Hdr, Navbar } from '@mantine/core';
 import { getWalletUserId } from '../../redux/actions';
 import { userListPropTypes } from '../../types';
 
 import { Header, WalletForm, Table } from './components';
-// import './style/Wallet.css';
+import './style/Wallet.css';
 
 class Wallet extends React.Component {
   state = {
@@ -34,20 +33,11 @@ class Wallet extends React.Component {
             <h1 className="error">{`Erro: ${error || 'Usuário inexistente'}`}</h1>
           </div>
         ) : (
-          <AppShell
-            header={
-              <Hdr height={ 90 }><Header /></Hdr>
-            }
-            navbar={
-              <Navbar width={ { sm: 200, lg: 300 } }>
-                <Navbar.Section>
-                  <WalletForm />
-                </Navbar.Section>
-              </Navbar>
-            }
-          >
+          <>
+            <Header />
+            <WalletForm />
             <Table />
-          </AppShell>
+          </>
         ) }
 
       </div>
