@@ -5,6 +5,10 @@
   padding: 10px 0;
 }
 
+.header-logo {
+  width: 10vw;
+}
+
 .user-info-container {
   align-items: center;
   display: flex;

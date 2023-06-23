@@ -43,8 +43,6 @@ class Login extends React.Component {
       <div className="login-page">
 
         <div className="login-box">
-          <h2 className="login-title">Insira o email cadastrado</h2>
-
           <div className="inputs-container">
             <input
               type="email"

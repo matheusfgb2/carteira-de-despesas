@@ -20,9 +20,10 @@
   border-radius: 10px;
   display: flex;
   flex-direction: column;
-  height: 40vh;
+  height: 30vh;
   justify-content: center;
   justify-items: center;
+  max-width: 40vw;
   width: 80vw;
 }
 
