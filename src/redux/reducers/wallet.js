@@ -7,6 +7,7 @@ import {
   SAVE_NEW_EXPENSE,
   SAVE_EDITED_EXPENSE,
   DELETE_EXPENSE,
+  SHOW_TABLE,
 } from '../actions/actionTypes';
 
 import { handleExpenses } from '../helpers';
@@ -19,6 +20,7 @@ const INITIAL_STATE = {
   idToEdit: '',
   isFetching: false,
   errorMessage: '',
+  isTableVisible: false,
 };
 
 const wallet = (state = INITIAL_STATE, action) => {
@@ -46,6 +48,8 @@ const wallet = (state = INITIAL_STATE, action) => {
       idToEdit: '' };
   case DELETE_EXPENSE:
     return { ...state, expenses: handleExpenses(action.payload, state) };
+  case SHOW_TABLE:
+    return { ...state, isTableVisible: !state.isTableVisible };
   default:
     return state;
   }

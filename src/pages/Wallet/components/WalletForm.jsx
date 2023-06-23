@@ -3,7 +3,11 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { nanoid } from 'nanoid';
 
-import { saveEditedExpense, thunkCurrenciesAndAddExpense } from '../../../redux/actions';
+import {
+  saveEditedExpense,
+  showTable,
+  thunkCurrenciesAndAddExpense,
+} from '../../../redux/actions';
 import { currenciesPropTypes, expensesPropTypes, userPropTypes } from '../../../types';
 import '../style/WalletForm.css';
 
@@ -57,9 +61,11 @@ class WalletForm extends Component {
 
   handleSubmit = async (e) => {
     e.preventDefault();
-    const { isEditMode } = this.props;
+    const { isEditMode, handleShowTable } = this.props;
     const { id, description, category, value, payment, currency } = this.state;
     const expenseData = { id, description, category, value, payment, currency };
+
+    handleShowTable();
 
     if (isEditMode) {
       const { saveUpdatedExpense } = this.props;
@@ -158,7 +164,7 @@ class WalletForm extends Component {
             </select>
           </label>
           {isEditMode ? (
-            <button type="submit" className="form-btn edit" disabled={ isFormIncomplete }>
+            <button type="submit" className="form-btn edit">
               Editar despesa
             </button>
           ) : (
@@ -180,6 +186,7 @@ WalletForm.propTypes = {
   saveUpdatedExpense: PropTypes.func.isRequired,
   saveNewExpense: PropTypes.func.isRequired,
   user: userPropTypes.isRequired,
+  handleShowTable: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = ({ users, wallet }) => ({
@@ -196,6 +203,7 @@ const mapDispatchToProps = (dispatch) => ({
     dispatch(thunkCurrenciesAndAddExpense(currency, stateData));
   },
   saveUpdatedExpense: (expenseData) => dispatch(saveEditedExpense(expenseData)),
+  handleShowTable: () => dispatch(showTable()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(WalletForm);
