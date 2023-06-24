@@ -2,12 +2,16 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { getExpenseIdToEdit, deleteExpense, showTable } from '../../../../redux/actions';
+import {
+  getExpenseIdToEdit,
+  deleteExpense,
+  showExpenseForm,
+} from '../../../../redux/actions';
 import { expensePropTypes } from '../../../../types';
 
 class TableBodyRowCard extends Component {
   render() {
-    const { expense, getIdToEditExpense, removeExpense, handleShowTable } = this.props;
+    const { expense, getIdToEditExpense, removeExpense, handleShowForm } = this.props;
 
     const { description, category, payment, value,
       currency, exchangeRates, id } = expense;
@@ -32,7 +36,7 @@ class TableBodyRowCard extends Component {
         <td>
           <button
             type="button"
-            onClick={ () => { getIdToEditExpense(id); handleShowTable(); } }
+            onClick={ () => { getIdToEditExpense(id); handleShowForm(); } }
           >
             Editar
           </button>
@@ -52,7 +56,7 @@ TableBodyRowCard.propTypes = {
   expense: expensePropTypes.isRequired,
   getIdToEditExpense: PropTypes.func.isRequired,
   removeExpense: PropTypes.func.isRequired,
-  handleShowTable: PropTypes.func.isRequired,
+  handleShowForm: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = ({ wallet }) => ({
@@ -63,7 +67,7 @@ const mapStateToProps = ({ wallet }) => ({
 const mapDispatchToProps = (dispatch) => ({
   getIdToEditExpense: (expenseId) => dispatch(getExpenseIdToEdit(expenseId)),
   removeExpense: (expenseId) => dispatch(deleteExpense(expenseId)),
-  handleShowTable: () => dispatch(showTable()),
+  handleShowForm: () => dispatch(showExpenseForm()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(TableBodyRowCard);

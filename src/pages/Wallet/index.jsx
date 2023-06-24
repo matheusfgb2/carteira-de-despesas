@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { getWalletUserId, showTable } from '../../redux/actions';
+import { getWalletUserId } from '../../redux/actions';
 import { userListPropTypes } from '../../types';
 
 import { Header, WalletForm, Table } from './components';
@@ -22,7 +22,7 @@ class Wallet extends React.Component {
   }
 
   render() {
-    const { error, isTableVisible, handleShowTable } = this.props;
+    const { error } = this.props;
     const { hasUser } = this.state;
 
     return (
@@ -35,9 +35,7 @@ class Wallet extends React.Component {
         ) : (
           <>
             <Header />
-            {isTableVisible ? <WalletForm /> : (
-              <button onClick={ handleShowTable }>Adicionar despesa</button>
-            )}
+            <WalletForm />
 
             <Table />
           </>
@@ -57,19 +55,16 @@ Wallet.propTypes = {
   }).isRequired,
   getUserId: PropTypes.func.isRequired,
   userList: userListPropTypes.isRequired,
-  isTableVisible: PropTypes.bool.isRequired,
-  handleShowTable: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = ({ users, wallet }) => ({
   userList: users.userList,
   error: wallet.errorMessage,
-  isTableVisible: wallet.isTableVisible,
+  isFormVisible: wallet.isFormVisible,
 });
 
 const mapDispatchToProps = (dispatch) => ({
   getUserId: (userId) => dispatch(getWalletUserId(userId)),
-  handleShowTable: () => dispatch(showTable()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Wallet);

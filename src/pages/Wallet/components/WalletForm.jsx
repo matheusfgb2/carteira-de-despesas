@@ -5,10 +5,16 @@ import { nanoid } from 'nanoid';
 
 import {
   saveEditedExpense,
-  showTable,
+  showExpenseForm,
   thunkCurrenciesAndAddExpense,
 } from '../../../redux/actions';
-import { currenciesPropTypes, expensesPropTypes, userPropTypes } from '../../../types';
+
+import {
+  currenciesPropTypes,
+  expensesPropTypes,
+  userPropTypes,
+} from '../../../types';
+
 import '../style/WalletForm.css';
 
 const TIMEOUT_MOUNT_VALUE = 1;
@@ -61,11 +67,11 @@ class WalletForm extends Component {
 
   handleSubmit = async (e) => {
     e.preventDefault();
-    const { isEditMode, handleShowTable } = this.props;
+    const { isEditMode, handleShowForm } = this.props;
     const { id, description, category, value, payment, currency } = this.state;
     const expenseData = { id, description, category, value, payment, currency };
 
-    handleShowTable();
+    handleShowForm();
 
     if (isEditMode) {
       const { saveUpdatedExpense } = this.props;
@@ -87,91 +93,103 @@ class WalletForm extends Component {
   };
 
   render() {
-    const { isEditMode, currencies } = this.props;
+    const { isEditMode, currencies, isFormVisible, handleShowForm } = this.props;
     const { description, value, currency,
       category, payment, isFormIncomplete } = this.state;
 
     return (
       <div className="wallet-form">
-        <form className="form-container" onSubmit={ this.handleSubmit }>
-          <h2 className="form-title">Despesa</h2>
-          <hr />
-          <label htmlFor="description">
-            Descrição:
-            <input
-              type="text"
-              name="description"
-              id="description"
-              value={ description }
-              onChange={ this.handleChange }
-            />
-          </label>
-          <label htmlFor="category">
-            Categoria:
-            <select
-              name="category"
-              id="category"
-              value={ category }
-              onChange={ this.handleChange }
-            >
-              {categories.map((tag) => (
-                <option key={ tag } value={ tag }>{tag}</option>))}
-            </select>
-          </label>
-          <label htmlFor="value">
-            Valor:
-            <input
-              type="number"
-              min="0"
-              name="value"
-              id="value"
-              value={ value }
-              onChange={ this.handleChange }
-            />
-          </label>
-          <label htmlFor="payment">
-            Pagamento:
-            <select
-              name="payment"
-              id="payment"
-              value={ payment }
-              onChange={ this.handleChange }
-            >
-              {paymentMethods.map((paymentMethod) => (
-                <option
-                  key={ paymentMethod }
-                  value={ paymentMethod }
+        {
+          isFormVisible ? (
+            <form className="form-container" onSubmit={ this.handleSubmit }>
+              <h2 className="form-title">Despesa</h2>
+              <hr />
+              <label htmlFor="description">
+                Descrição:
+                <input
+                  type="text"
+                  name="description"
+                  id="description"
+                  value={ description }
+                  onChange={ this.handleChange }
+                />
+              </label>
+              <label htmlFor="category">
+                Categoria:
+                <select
+                  name="category"
+                  id="category"
+                  value={ category }
+                  onChange={ this.handleChange }
                 >
-                  {paymentMethod}
-                </option>))}
-            </select>
-          </label>
-          <label htmlFor="currency">
-            Moeda:
-            <select
-              name="currency"
-              id="currency"
-              value={ currency }
-              onChange={ this.handleChange }
-            >
-              {currencies.map((coin) => (
-                <option
-                  key={ coin.code }
-                  value={ coin.code }
+                  {categories.map((tag) => (
+                    <option key={ tag } value={ tag }>{tag}</option>))}
+                </select>
+              </label>
+              <label htmlFor="value">
+                Valor:
+                <input
+                  type="number"
+                  min="0"
+                  name="value"
+                  id="value"
+                  value={ value }
+                  onChange={ this.handleChange }
+                />
+              </label>
+              <label htmlFor="payment">
+                Pagamento:
+                <select
+                  name="payment"
+                  id="payment"
+                  value={ payment }
+                  onChange={ this.handleChange }
                 >
-                  {`${coin.name}${coin.code !== coin.name ? ` (${coin.code})` : ''}`}
-                </option>))}
-            </select>
-          </label>
-          {isEditMode ? (
-            <button type="submit" className="form-btn edit">
-              Editar despesa
-            </button>
+                  {paymentMethods.map((paymentMethod) => (
+                    <option
+                      key={ paymentMethod }
+                      value={ paymentMethod }
+                    >
+                      {paymentMethod}
+                    </option>))}
+                </select>
+              </label>
+              <label htmlFor="currency">
+                Moeda:
+                <select
+                  name="currency"
+                  id="currency"
+                  value={ currency }
+                  onChange={ this.handleChange }
+                >
+                  {currencies.map((coin) => (
+                    <option
+                      key={ coin.code }
+                      value={ coin.code }
+                    >
+                      {`${coin.name}${coin.code !== coin.name ? ` (${coin.code})` : ''}`}
+                    </option>))}
+                </select>
+              </label>
+              {isEditMode ? (
+                <button type="submit" className="form-btn edit">
+                  Editar despesa
+                </button>
+              ) : (
+                <button type="submit" className="form-btn" disabled={ isFormIncomplete }>
+                  Adicionar despesa
+                </button>)}
+            </form>
           ) : (
-            <button type="submit" className="form-btn" disabled={ isFormIncomplete }>
-              Adicionar despesa
-            </button>)}
-        </form>
+            <button
+              className="form-btn"
+              onClick={ handleShowForm }
+            >
+              Nova despesa
+            </button>
+          )
+        }
+
       </div>
     );
   }
@@ -186,13 +204,15 @@ WalletForm.propTypes = {
   saveUpdatedExpense: PropTypes.func.isRequired,
   saveNewExpense: PropTypes.func.isRequired,
   user: userPropTypes.isRequired,
-  handleShowTable: PropTypes.func.isRequired,
+  handleShowForm: PropTypes.func.isRequired,
+  isFormVisible: PropTypes.bool.isRequired,
 };
 
 const mapStateToProps = ({ users, wallet }) => ({
   currencies: wallet.currencies,
   expenses: wallet.expenses,
   isEditMode: wallet.isEditMode,
+  isFormVisible: wallet.isFormVisible,
   expenseId: wallet.idToEdit,
   user: users.userList.find(({ id }) => id === wallet.walletUserId) || {},
 });
@@ -203,7 +223,7 @@ const mapDispatchToProps = (dispatch) => ({
     dispatch(thunkCurrenciesAndAddExpense(currency, stateData));
   },
   saveUpdatedExpense: (expenseData) => dispatch(saveEditedExpense(expenseData)),
-  handleShowTable: () => dispatch(showTable()),
+  handleShowForm: () => dispatch(showExpenseForm()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(WalletForm);

@@ -12,7 +12,7 @@ import {
   SAVE_NEW_EXPENSE,
   GET_EXPENSE_ID_TO_EDIT,
   SAVE_EDITED_EXPENSE,
-  SHOW_TABLE,
+  SHOW_EXPENSE_FORM,
 } from './actionTypes';
 
 // users
@@ -50,8 +50,8 @@ export const deleteExpense = (idToRemove) => ({
   type: DELETE_EXPENSE,
   payload: { idToRemove },
 });
-export const showTable = () => ({
-  type: SHOW_TABLE,
+export const showExpenseForm = () => ({
+  type: SHOW_EXPENSE_FORM,
 });
 
 const walletRequestStarted = () => ({
