@@ -27,13 +27,13 @@
   width: 80vw;
 }
 
-.inputs-container {
+.input-container {
   display: flex;
   flex-direction: column;
   padding: 10px 0;
 }
 
-input {
+.input-container input {
   background-color: rgba(255, 255, 255, 0.1);
   border: none;
   border-radius: 5px;
@@ -44,11 +44,11 @@ input {
   transition: background-color 0.3s ease;
 }
 
-input::placeholder {
+.input-container input::placeholder {
   color: rgb(131, 147, 167);
 }
 
-input:focus {
+.input-container input:focus {
   background-color: rgba(255, 255, 255, 0.2);
   outline: none;
 }

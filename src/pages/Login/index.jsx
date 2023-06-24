@@ -43,7 +43,7 @@ class Login extends React.Component {
       <div className="login-page">
 
         <div className="login-box">
-          <div className="inputs-container">
+          <div className="input-container">
             <input
               type="email"
               name="email"
