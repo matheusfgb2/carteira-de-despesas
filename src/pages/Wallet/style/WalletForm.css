@@ -25,15 +25,18 @@
   text-transform: uppercase;
 }
 
-.form-container label {
-  color: rgb(194, 209, 220);
-  display: block;
-  font-size: 17px;
-  margin-bottom: 5px;
+.input-with-label {
+  display: flex;
 }
 
-.form-container hr {
-  margin-bottom: 10px;
+.form-container label {
+  align-self: center;
+  color: rgb(194, 209, 220);
+  font-size: 17px;
+  margin-bottom: 5px;
+  padding-right: 8px;
+  text-align: end;
+  width: 25%;
 }
 
 .form-container input , .form-container select {
@@ -43,9 +46,8 @@
   border-radius: 5px;
   box-sizing: border-box;
   margin: 10px 0;
-  max-width: 100%;
   padding: 8px;
-  width: 100%;
+  width: 50%;
 }
 
 .form-container select {
