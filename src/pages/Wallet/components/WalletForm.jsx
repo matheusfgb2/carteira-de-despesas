@@ -71,8 +71,6 @@ class WalletForm extends Component {
     const { id, description, category, value, payment, currency } = this.state;
     const expenseData = { id, description, category, value, payment, currency };
 
-    handleShowForm();
-
     if (isEditMode) {
       const { saveUpdatedExpense } = this.props;
       saveUpdatedExpense(expenseData);
@@ -81,6 +79,7 @@ class WalletForm extends Component {
       await saveNewExpense(user.currency, expenseData);
     }
     this.resetLocalState(isEditMode);
+    handleShowForm();
   };
 
   resetLocalState = (isEditMode) => {
@@ -103,7 +102,6 @@ class WalletForm extends Component {
           isFormVisible ? (
             <form className="form-container" onSubmit={ this.handleSubmit }>
               <h2 className="form-title">Despesa</h2>
-              <hr />
 
               <div className="input-with-label">
                 <label htmlFor="description">
