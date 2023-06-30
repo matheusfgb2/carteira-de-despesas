@@ -40,16 +40,18 @@ const wallet = (state = INITIAL_STATE, action) => {
   case SAVE_NEW_EXPENSE:
     return { ...state,
       isFetching: false,
+      isFormVisible: false,
       expenses: handleExpenses(action.payload, state) };
   case SAVE_EDITED_EXPENSE:
     return { ...state,
       isEditMode: false,
+      isFormVisible: false,
       expenses: handleExpenses(action.payload, state),
       idToEdit: '' };
   case DELETE_EXPENSE:
     return { ...state, expenses: handleExpenses(action.payload, state) };
   case SHOW_EXPENSE_FORM:
-    return { ...state, isFormVisible: !state.isFormVisible };
+    return { ...state, isFormVisible: true };
   default:
     return state;
   }

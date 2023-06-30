@@ -67,7 +67,7 @@ class WalletForm extends Component {
 
   handleSubmit = async (e) => {
     e.preventDefault();
-    const { isEditMode, handleShowForm } = this.props;
+    const { isEditMode } = this.props;
     const { id, description, category, value, payment, currency } = this.state;
     const expenseData = { id, description, category, value, payment, currency };
 
@@ -79,7 +79,6 @@ class WalletForm extends Component {
       await saveNewExpense(user.currency, expenseData);
     }
     this.resetLocalState(isEditMode);
-    handleShowForm();
   };
 
   resetLocalState = (isEditMode) => {

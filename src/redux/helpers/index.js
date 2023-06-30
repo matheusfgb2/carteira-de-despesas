@@ -51,8 +51,9 @@ const createNewExpense = (userId, expenses, expenseData) => {
 
 const editPrevExpense = (userId, expenseId, expenses, expenseData) => {
   const { description, tag, value, method, currency } = expenseData;
+  const expensesCopy = [...expenses];
 
-  const expenseToEdit = expenses.find(({ id }) => id === expenseId);
+  const expenseToEdit = expensesCopy.find(({ id }) => id === expenseId);
 
   expenseToEdit.description = description;
   expenseToEdit.tag = tag;
@@ -60,8 +61,8 @@ const editPrevExpense = (userId, expenseId, expenses, expenseData) => {
   expenseToEdit.method = method;
   expenseToEdit.currency = currency;
 
-  localStorage.setItem(userId, JSON.stringify(expenses));
-  return expenses;
+  localStorage.setItem(userId, JSON.stringify(expensesCopy));
+  return expensesCopy;
 };
 
 const removePrevExpense = (userId, expenseId, expenses) => {

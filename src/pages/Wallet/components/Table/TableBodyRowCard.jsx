@@ -10,8 +10,15 @@ import {
 import { expensePropTypes } from '../../../../types';
 
 class TableBodyRowCard extends Component {
+  handleEdit = (id) => {
+    const { getIdToEditExpense, handleShowForm } = this.props;
+
+    getIdToEditExpense(id);
+    handleShowForm();
+  };
+
   render() {
-    const { expense, getIdToEditExpense, removeExpense, handleShowForm } = this.props;
+    const { expense, removeExpense } = this.props;
 
     const { description, category, payment, value,
       currency, exchangeRates, id } = expense;
@@ -36,7 +43,7 @@ class TableBodyRowCard extends Component {
         <td>
           <button
             type="button"
-            onClick={ () => { getIdToEditExpense(id); handleShowForm(); } }
+            onClick={ () => this.handleEdit(id) }
           >
             Editar
           </button>
