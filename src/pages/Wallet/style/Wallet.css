@@ -1,7 +1,8 @@
 .wallet-page {
   background-color: rgb(33, 40, 46);
   background-image: url('../../../assets/background.svg');
-  height: 100vh;
+  background-size: cover;
+  min-height: 100vh;
 }
 
 .error-container {
