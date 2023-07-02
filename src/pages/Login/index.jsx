@@ -3,6 +3,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 
+import logo from '../../assets/logo.png';
 import './style/Login.css';
 
 class Login extends React.Component {
@@ -43,6 +44,7 @@ class Login extends React.Component {
       <div className="login-page">
 
         <div className="login-box">
+          <img src={ logo } alt="Wallet" className="login-logo" />
           <div className="input-container">
             <input
               type="email"
