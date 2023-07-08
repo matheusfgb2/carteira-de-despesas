@@ -43,12 +43,14 @@ class TableBodyRowCard extends Component {
         <td>
           <button
             type="button"
+            className="edit-btn"
             onClick={ () => this.handleEdit(id) }
           >
             Editar
           </button>
           <button
             type="button"
+            className="rmv-btn"
             onClick={ () => removeExpense(id) }
           >
             Excluir
