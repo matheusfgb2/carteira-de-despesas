@@ -105,3 +105,13 @@
   cursor: not-allowed;
   transform: unset;
 }
+
+.close-icon {
+  color: rgb(194, 209, 220);
+  cursor: pointer;
+  margin-left: 40px;
+}
+
+.close-icon:hover {
+  color: black;
+}

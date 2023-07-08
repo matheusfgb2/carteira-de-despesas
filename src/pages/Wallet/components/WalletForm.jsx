@@ -2,6 +2,8 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { nanoid } from 'nanoid';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTimes } from '@fortawesome/free-solid-svg-icons';
 
 import {
   saveEditedExpense,
@@ -100,8 +102,12 @@ class WalletForm extends Component {
         {
           isFormVisible ? (
             <form className="form-container" onSubmit={ this.handleSubmit }>
+              <FontAwesomeIcon
+                icon={ faTimes }
+                className="close-icon"
+                onClick={ handleShowForm }
+              />
               <h2 className="form-title">Despesa</h2>
-
               <div className="input-with-label">
                 <label htmlFor="description">
                   Descrição:
@@ -114,9 +120,7 @@ class WalletForm extends Component {
                   onChange={ this.handleChange }
                 />
               </div>
-
               <div className="input-with-label">
-
                 <label htmlFor="category">
                   Categoria:
                 </label>
@@ -130,7 +134,6 @@ class WalletForm extends Component {
                     <option key={ tag } value={ tag }>{tag}</option>))}
                 </select>
               </div>
-
               <div className="input-with-label">
                 <label htmlFor="value">
                   Valor:
@@ -144,7 +147,6 @@ class WalletForm extends Component {
                   onChange={ this.handleChange }
                 />
               </div>
-
               <div className="input-with-label">
                 <label htmlFor="payment">
                   Pagamento:
@@ -164,7 +166,6 @@ class WalletForm extends Component {
                     </option>))}
                 </select>
               </div>
-
               <div className="input-with-label">
                 <label htmlFor="currency">
                   Moeda:
@@ -184,7 +185,6 @@ class WalletForm extends Component {
                     </option>))}
                 </select>
               </div>
-
               {isEditMode ? (
                 <button type="submit" className="form-btn edit">
                   Editar despesa
@@ -203,7 +203,6 @@ class WalletForm extends Component {
             </button>
           )
         }
-
       </div>
     );
   }
