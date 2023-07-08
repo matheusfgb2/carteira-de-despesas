@@ -62,6 +62,10 @@
   outline: none;
 }
 
+.form-container select option {
+  background-color: rgb(38, 59, 59);
+}
+
 .form-btn {
   align-self: center;
   background-color: rgb(29, 161, 119);
