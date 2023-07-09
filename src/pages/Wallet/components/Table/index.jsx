@@ -16,7 +16,9 @@ const tableHeaderContent = [
 class Table extends Component {
   render() {
     const { expenses, isLoading } = this.props;
-    return (
+    const hasExpenses = expenses.length > 0;
+
+    return hasExpenses && (
       <div className="expenses-table-component">
         <div className="expenses-table-div">
           {isLoading ? <h2 className="loading">Loading...</h2> : (

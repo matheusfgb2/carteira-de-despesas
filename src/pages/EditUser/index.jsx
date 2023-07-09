@@ -20,7 +20,9 @@ export default class CreateUser extends Component {
     const { isEditUser, userId } = this.state;
     const { history } = this.props;
     return (
-      <UserForm history={ history } isEditUser={ isEditUser } userId={ userId } />
+      <div className="user-page">
+        <UserForm history={ history } isEditUser={ isEditUser } userId={ userId } />
+      </div>
     );
   }
 }
