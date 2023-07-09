@@ -51,7 +51,7 @@ const wallet = (state = INITIAL_STATE, action) => {
   case DELETE_EXPENSE:
     return { ...state, expenses: handleExpenses(action.payload, state) };
   case SHOW_EXPENSE_FORM:
-    return { ...state, isFormVisible: true };
+    return { ...state, isFormVisible: action.payload };
   default:
     return state;
   }

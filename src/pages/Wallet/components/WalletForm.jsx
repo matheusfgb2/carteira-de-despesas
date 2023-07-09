@@ -105,8 +105,9 @@ class WalletForm extends Component {
               <FontAwesomeIcon
                 icon={ faTimes }
                 className="close-icon"
-                onClick={ handleShowForm }
+                onClick={ () => handleShowForm(false) }
               />
+              <br />
               <h2 className="form-title">Despesa</h2>
               <div className="input-with-label">
                 <label htmlFor="description">
@@ -236,7 +237,7 @@ const mapDispatchToProps = (dispatch) => ({
     dispatch(thunkCurrenciesAndAddExpense(currency, stateData));
   },
   saveUpdatedExpense: (expenseData) => dispatch(saveEditedExpense(expenseData)),
-  handleShowForm: () => dispatch(showExpenseForm()),
+  handleShowForm: (showForm = true) => dispatch(showExpenseForm(showForm)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(WalletForm);

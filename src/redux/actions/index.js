@@ -50,8 +50,9 @@ export const deleteExpense = (idToRemove) => ({
   type: DELETE_EXPENSE,
   payload: { idToRemove },
 });
-export const showExpenseForm = () => ({
+export const showExpenseForm = (showForm = true) => ({
   type: SHOW_EXPENSE_FORM,
+  payload: showForm,
 });
 
 const walletRequestStarted = () => ({
