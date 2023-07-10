@@ -158,6 +158,11 @@ class UserForm extends Component {
                 </option>))}
             </select>
           </div>
+          {isEditUser && (
+            <small className="field-warning">
+              A troca de moeda acarretará na remoçâo da lista de despesas
+            </small>
+          )}
           <button type="submit">
             {isEditUser ? 'Editar usuário'
               : 'Criar usuário'}
@@ -180,17 +185,12 @@ class UserForm extends Component {
           </p>
         ) }
         {isEditUser && (
-          <>
-            <button
-              onClick={ () => this.handleRemoveUser(id) }
-              className="delete-user-button"
-            >
-              Deletar usuário
-            </button>
-            <p className="field-warning">
-              A troca de moeda acarretará na remoçâo da lista de despesas
-            </p>
-          </>
+          <button
+            onClick={ () => this.handleRemoveUser(id) }
+            className="delete-user-button"
+          >
+            Deletar usuário
+          </button>
         )}
       </div>
     );

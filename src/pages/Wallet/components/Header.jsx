@@ -33,7 +33,7 @@ class Header extends Component {
         <div className="user-info-container">
           <p>{`${name} | ${email}`}</p>
           <p>{`Despesa total: ${totalOfExpenses} ${currency}`}</p>
-          <Link to={ `/editar-usuario/${userId}` }>Editar Usuário</Link>
+          <Link to={ `/editar-usuario/${userId}` }>Editar usuário</Link>
         </div>
       </div>
     );

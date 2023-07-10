@@ -198,7 +198,7 @@ class WalletForm extends Component {
           ) : (
             <button
               className="form-btn"
-              onClick={ handleShowForm }
+              onClick={ () => handleShowForm() }
             >
               Nova despesa
             </button>
