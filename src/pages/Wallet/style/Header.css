@@ -1,8 +1,13 @@
 .header-container {
-  background-color: white;
+  background-color: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: space-around;
   padding: 10px 0;
+}
+
+.header-logo {
+  max-width: 150px;
+  width: 30vw;
 }
 
 .user-info-container {
@@ -13,6 +18,27 @@
 }
 
 .user-info-container p {
-  font-size: 17px;
+  color: rgb(194, 209, 220);
+  font-size: 14px;
 }
 
+.user-info-container a {
+  color: rgb(25, 149, 108);
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.user-info-container a:hover {
+  color: white;
+  text-decoration: underline;
+}
+
+@media only screen and ( min-width : 600px ) {
+
+  .user-info-container p {
+    color: rgb(194, 209, 220);
+    font-size: 17px;
+  }
+}

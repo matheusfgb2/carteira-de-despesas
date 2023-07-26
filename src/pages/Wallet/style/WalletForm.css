@@ -9,41 +9,102 @@
 }
 
 .form-container {
-  background-color: rgba(255, 255, 255, 0.815);
+  background-color: rgba(0, 0, 0, 0.5);
   border-radius: 10px;
-  display: flex;
-  flex-direction: column;
-  padding: 18px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  max-width: 400px;
+  padding: 18px 0;
+  width: 50%;
 }
 
 .form-title {
-  padding-bottom: 10px;
+  color: rgb(194, 209, 220);
+  font-size: 20px;
+  margin-bottom: 10px;
   text-align: center;
   text-transform: uppercase;
 }
 
-.form-container input , .form-container select {
-  margin-left: 5px;
+.close-icon {
+  color: rgb(194, 209, 220);
+  cursor: pointer;
+  float: right;
+  margin-right: 30px;
+}
+
+.close-icon:hover {
+  color: black;
+}
+
+.input-with-label {
+  display: flex;
+  justify-content: center;
 }
 
 .form-container label {
-  padding: 5px 0;
+  align-self: center;
+  color: rgb(194, 209, 220);
+  font-size: 17px;
+  margin-bottom: 5px;
+  padding-right: 8px;
+  text-align: center;
+  width: 25%;
+}
+
+.form-container input , .form-container select {
+  align-self: center;
+  background-color: rgba(255, 255, 255, 0.1);
+  border: none;
+  border-radius: 5px;
+  box-sizing: border-box;
+  color: rgb(194, 209, 220);
+  margin: 10px 0;
+  padding: 8px;
+  transition: background-color 0.3s ease;
+  width: 50%;
+}
+
+.form-container select {
+  max-width: 100%;
+}
+
+.form-container input:focus , .form-container select:focus {
+  background-color: rgba(255, 255, 255, 0.2);
+  outline: none;
+}
+
+.form-container select option {
+  background-color: rgb(38, 59, 59);
 }
 
 .form-btn {
   align-self: center;
-  background-color: rgba(47, 193, 140, 1);
+  background-color: rgb(29, 161, 119);
   border: none;
-  border-radius: 7px;
+  border-radius: 5px;
   color: white;
+  cursor: pointer;
+  display: block;
   font-size: 16px;
-  margin-top: 10px;
-  padding: 7px;
-  width: 180px;
+  margin: 0 auto;
+  margin-top: 20px;
+  max-width: 180px;
+  padding: 10px;
+  transition: background-color 0.3s ease;
+  width: 100%;
 }
 
+.form-btn.edit {
+  background-color: rgb(3, 67, 224);
+}
+
+.form-btn.edit:hover {
+  background-color: rgb(3, 57, 194);
+}
+
+
 .form-btn:hover {
-  cursor: pointer;
+  background-color: rgb(25, 149, 108);
 }
 
 .form-btn:active {
@@ -51,11 +112,7 @@
 }
 
 .form-btn:disabled {
-  background-color: red;
-  cursor: unset;
+  background-color: rgba(222, 91, 91, 0.568);
+  cursor: not-allowed;
   transform: unset;
-}
-
-.edit {
-  background-color: rgb(3, 67, 224);
 }

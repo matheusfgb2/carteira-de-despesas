@@ -1,9 +1,8 @@
 .wallet-page {
-  background-color: rgb(61, 193, 140);
-  background-image: url('../../../assets/background.png');
-  background-repeat: no-repeat;
+  background-color: rgb(33, 40, 46);
+  background-image: url('../../../assets/background.svg');
   background-size: cover;
-  height: 100vh;
+  min-height: 100vh;
 }
 
 .error-container {

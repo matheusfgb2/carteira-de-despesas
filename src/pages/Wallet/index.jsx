@@ -10,34 +10,32 @@ import './style/Wallet.css';
 
 class Wallet extends React.Component {
   state = {
-    doHaveUser: true,
+    hasUser: true,
   };
 
   componentDidMount() {
     const { match: { params: { userId } },
       getUserId, userList } = this.props;
-    const doHaveUser = userList.some(({ id }) => id === userId);
-    this.setState({ doHaveUser });
+    const hasUser = userList.some(({ id }) => id === userId);
+    this.setState({ hasUser });
     getUserId(userId);
   }
 
   render() {
     const { error } = this.props;
-    const { doHaveUser } = this.state;
+    const { hasUser } = this.state;
 
     return (
       <div className="wallet-page">
 
-        { error || !doHaveUser ? (
+        { error || !hasUser ? (
           <div className="error-container">
             <h1 className="error">{`Erro: ${error || 'Usuário inexistente'}`}</h1>
           </div>
         ) : (
           <>
             <Header />
-
             <WalletForm />
-
             <Table />
           </>
         ) }
@@ -61,6 +59,7 @@ Wallet.propTypes = {
 const mapStateToProps = ({ users, wallet }) => ({
   userList: users.userList,
   error: wallet.errorMessage,
+  isFormVisible: wallet.isFormVisible,
 });
 
 const mapDispatchToProps = (dispatch) => ({

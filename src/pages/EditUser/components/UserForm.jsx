@@ -103,12 +103,17 @@ class UserForm extends Component {
     if (userCurrencies.error) return <h1>{userCurrencies.error}</h1>;
 
     return (
-      <div>
+
+      <div className="user-box">
         <form
-          onSubmit={ isEditUser ? this.handleValidationEditMode : this.handleValidation }
+          onSubmit={ isEditUser ? this.handleValidationEditMode
+            : this.handleValidation }
+          className="user-form-container"
         >
-          <label htmlFor="name">
-            Nome
+          <div className="label-with-input">
+            <label htmlFor="name">
+              Nome:
+            </label>
             <input
               type="text"
               name="name"
@@ -116,11 +121,13 @@ class UserForm extends Component {
               value={ name }
               onChange={ this.handleChange }
             />
-          </label>
+          </div>
           {
             !isEditUser && (
-              <label htmlFor="email">
-                Email
+              <div className="label-with-input">
+                <label htmlFor="email">
+                  Email:
+                </label>
                 <input
                   type="text"
                   name="email"
@@ -128,11 +135,13 @@ class UserForm extends Component {
                   value={ email }
                   onChange={ this.handleChange }
                 />
-              </label>
+              </div>
             )
           }
-          <label htmlFor="currency">
-            Moeda:
+          <div className="label-with-input">
+            <label htmlFor="currency">
+              Moeda:
+            </label>
             <select
               name="currency"
               id="currency"
@@ -148,8 +157,17 @@ class UserForm extends Component {
                   {`${coin.name}${coin.code !== coin.name ? ` (${coin.code})` : ''}`}
                 </option>))}
             </select>
-          </label>
-          <button type="submit">{isEditUser ? 'Editar usuário' : 'Criar usuário'}</button>
+          </div>
+          {isEditUser && (
+            <small className="field-warning">
+              A troca de moeda acarretará na remoçâo da lista de despesas
+            </small>
+          )}
+          <button type="submit">
+            {isEditUser ? 'Editar usuário'
+              : 'Criar usuário'}
+
+          </button>
         </form>
         {!isValidName && (
           <p className="field-warning">
@@ -167,12 +185,12 @@ class UserForm extends Component {
           </p>
         ) }
         {isEditUser && (
-          <>
-            <button onClick={ () => this.handleRemoveUser(id) }>Deletar usuário</button>
-            <p className="field-warning">
-              A troca de moeda acarretará na remoçâo da lista de despesas
-            </p>
-          </>
+          <button
+            onClick={ () => this.handleRemoveUser(id) }
+            className="delete-user-button"
+          >
+            Deletar usuário
+          </button>
         )}
       </div>
     );

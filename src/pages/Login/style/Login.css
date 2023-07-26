@@ -4,10 +4,8 @@
 
 .login-page {
   align-items: center;
-  background-color: rgb(61, 193, 140);
-  background-image: url('../../../assets/background.png');
-  background-repeat: no-repeat;
-  background-size: cover;
+  background-color: rgb(33, 40, 46);
+  background-image: url('../../../assets/background.svg');
   display: flex;
   height: 100vh;
   justify-content: center;
@@ -16,22 +14,78 @@
 
 .login-box {
   align-items: center;
-  background-color: rgba(255, 255, 255, 0.815);
+  background-color: rgba(0, 0, 0, 0.5);
   border-radius: 10px;
   display: flex;
   flex-direction: column;
-  height: 40vh;
   justify-content: center;
   justify-items: center;
+  max-width: 500px;
+  padding: 50px 0;
   width: 80vw;
 }
 
-.inputs-container {
+.login-logo {
+  max-width: 250px;
+}
+
+.input-container {
   display: flex;
   flex-direction: column;
   padding: 10px 0;
 }
 
-input {
+.input-container input {
+  background-color: rgba(255, 255, 255, 0.1);
+  border: none;
+  border-radius: 5px;
+  color: rgb(194, 209, 220);
+  font-size: 14px;
   margin: 5px 0;
+  padding: 10px;
+  transition: background-color 0.3s ease;
+}
+
+.input-container input::placeholder {
+  color: rgb(131, 147, 167);
+}
+
+.input-container input:focus {
+  background-color: rgba(255, 255, 255, 0.2);
+  outline: none;
+}
+
+.login-button {
+  background-color: rgb(29, 161, 119);
+  border: none;
+  border-radius: 5px;
+  color: white;
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: 10px;
+  padding: 12px 20px;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.login-button:hover {
+  background-color: rgb(25, 139, 102);
+  transform: scale(1.05);
+}
+
+.create-user-link {
+  color: rgb(25, 149, 108);
+  font-size: 14px;
+  margin-top: 10px;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.create-user-link:hover {
+  color: white;
+  text-decoration: underline;
+}
+
+.field-warning {
+  color: red;
+  margin-top: 10px;
 }

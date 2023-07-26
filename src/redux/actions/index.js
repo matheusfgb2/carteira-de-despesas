@@ -12,6 +12,7 @@ import {
   SAVE_NEW_EXPENSE,
   GET_EXPENSE_ID_TO_EDIT,
   SAVE_EDITED_EXPENSE,
+  SHOW_EXPENSE_FORM,
 } from './actionTypes';
 
 // users
@@ -48,6 +49,10 @@ export const saveEditedExpense = (expenseData) => ({
 export const deleteExpense = (idToRemove) => ({
   type: DELETE_EXPENSE,
   payload: { idToRemove },
+});
+export const showExpenseForm = (showForm = true) => ({
+  type: SHOW_EXPENSE_FORM,
+  payload: showForm,
 });
 
 const walletRequestStarted = () => ({

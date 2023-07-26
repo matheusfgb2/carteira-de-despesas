@@ -3,6 +3,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 
+import logo from '../../assets/logo.png';
 import './style/Login.css';
 
 class Login extends React.Component {
@@ -43,9 +44,8 @@ class Login extends React.Component {
       <div className="login-page">
 
         <div className="login-box">
-          <h2 className="login-title">Insira o email cadastrado</h2>
-
-          <div className="inputs-container">
+          <img src={ logo } alt="Wallet" className="login-logo" />
+          <div className="input-container">
             <input
               type="email"
               name="email"
@@ -55,12 +55,13 @@ class Login extends React.Component {
             />
           </div>
           <button
+            className="login-button"
             type="button"
             onClick={ this.handleValidation }
           >
             Entrar
           </button>
-          <Link to="/novo-usuario">Criar usuário</Link>
+          <Link to="/novo-usuario" className="create-user-link">Criar usuário</Link>
           {!isValidEmail && <h3 className="field-warning">Email inválido</h3>}
         </div>
 
