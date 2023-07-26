@@ -1,9 +1,11 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+
+import { expensesPropTypes } from '../../../../types';
+
 import TableBodyRowCard from './TableBodyRowCard';
-import './Table.css';
-import { expensesPropTypes } from '../types';
+import '../../style/Table.css';
 
 const tableHeaderContent = [
   'Descrição', 'Tag', 'Método de pagamento',
@@ -14,7 +16,9 @@ const tableHeaderContent = [
 class Table extends Component {
   render() {
     const { expenses, isLoading } = this.props;
-    return (
+    const hasExpenses = expenses.length > 0;
+
+    return hasExpenses && (
       <div className="expenses-table-component">
         <div className="expenses-table-div">
           {isLoading ? <h2 className="loading">Loading...</h2> : (

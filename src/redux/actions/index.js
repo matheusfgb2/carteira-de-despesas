@@ -1,72 +1,94 @@
-// user actions
-export const GET_EMAIL = 'GET_EMAIL';
+import { fetchExpenseExchRates, fetchWalletCurrencies } from '../../services/api';
 
-export const getEmail = (email) => ({
-  type: GET_EMAIL,
-  payload: email,
+import {
+  CREATE_USER,
+  EDIT_USER,
+  DELETE_USER,
+  DELETE_EXPENSE,
+  GET_WALLET_USER_ID,
+  WALLET_REQUEST_STARTED,
+  WALLET_REQUEST_FAILED,
+  GET_WALLET_CURRENCIES,
+  SAVE_NEW_EXPENSE,
+  GET_EXPENSE_ID_TO_EDIT,
+  SAVE_EDITED_EXPENSE,
+  SHOW_EXPENSE_FORM,
+} from './actionTypes';
+
+// users
+export const createUser = (userData) => ({
+  type: CREATE_USER,
+  payload: { userData },
+});
+export const editUser = (userData) => ({
+  type: EDIT_USER,
+  payload: { userData },
+});
+export const deleteUser = (userId) => ({
+  type: DELETE_USER,
+  payload: { userId },
 });
 
-// wallet actions
-export const SAVE_EDITED_EXPENSE = 'SAVE_EDITED_EXPENSE';
-export const GET_ID_TO_EDIT = 'GET_ID_TO_EDIT';
-export const DELETE_EXPENSE = 'DELETE_EXPENSE';
-
+// wallet
+export const getWalletUserId = (userId) => ({
+  type: GET_WALLET_USER_ID,
+  payload: userId,
+});
+export const getExpenseIdToEdit = (idToEdit) => ({
+  type: GET_EXPENSE_ID_TO_EDIT,
+  payload: idToEdit,
+});
+export const saveNewExpense = (expenseData) => ({
+  type: SAVE_NEW_EXPENSE,
+  payload: { expenseData },
+});
 export const saveEditedExpense = (expenseData) => ({
   type: SAVE_EDITED_EXPENSE,
-  payload: expenseData,
+  payload: { expenseData },
 });
-
-export const getIdToEdit = (expenseId) => ({
-  type: GET_ID_TO_EDIT,
-  payload: expenseId,
-});
-
-export const deleteExpense = (expenseId) => ({
+export const deleteExpense = (idToRemove) => ({
   type: DELETE_EXPENSE,
-  payload: expenseId,
+  payload: { idToRemove },
+});
+export const showExpenseForm = (showForm = true) => ({
+  type: SHOW_EXPENSE_FORM,
+  payload: showForm,
 });
 
-// thunkCurrenciesAndAddExpense
-export const REQUEST_STARTED = 'REQUEST_STARTED';
-export const CURRENCIES_SUCCESSFUL = 'CURRENCIES_SUCCESSFUL';
-export const EXPENSE_SUCCESSFUL = 'EXPENSE_SUCCESSFUL';
-export const REQUEST_FAILED = 'REQUEST_FAILED';
-
-const requestStarted = () => ({
-  type: REQUEST_STARTED,
+const walletRequestStarted = () => ({
+  type: WALLET_REQUEST_STARTED,
 });
-const currenciesSuccessful = (currencies) => ({
-  type: CURRENCIES_SUCCESSFUL,
+const walletRequestFailed = (error) => ({
+  type: WALLET_REQUEST_FAILED, payload: error,
+});
+const getWalletCurrencies = (currencies) => ({
+  type: GET_WALLET_CURRENCIES,
   payload: currencies,
 });
-const expenseSuccessful = (expense) => ({
-  type: EXPENSE_SUCCESSFUL,
-  payload: expense,
-});
-const requestFailed = (error) => ({
-  type: REQUEST_FAILED, payload: error,
-});
 
-export function thunkCurrenciesAndAddExpense(expenseData = undefined) {
-  return async (dispatch) => {
-    try {
-      dispatch(requestStarted());
-      const API_URL = 'https://economia.awesomeapi.com.br/json/all';
-      const request = await fetch(API_URL);
-      const exchangeRates = await request.json();
-      if (expenseData) {
-        const expense = {
-          ...expenseData,
-          exchangeRates,
-        };
-        dispatch(expenseSuccessful(expense));
-        return;
-      }
-      const currencies = Object.keys(exchangeRates)
-        .filter((currency) => currency !== 'USDT');
-      dispatch(currenciesSuccessful(currencies));
-    } catch (error) {
-      dispatch(requestFailed(error.message));
+export const thunkCurrenciesAndAddExpense = (
+  userCurrency,
+  expenseData = undefined,
+) => async (dispatch) => {
+  try {
+    dispatch(walletRequestStarted());
+
+    const currencies = await fetchWalletCurrencies(userCurrency);
+    if (expenseData) {
+      const exchangeRates = await fetchExpenseExchRates(currencies, userCurrency);
+
+      const expense = {
+        ...expenseData,
+        value: Number(expenseData.value),
+        exchangeRates,
+      };
+
+      dispatch(saveNewExpense(expense));
+      return;
     }
-  };
-}
+    dispatch(getWalletCurrencies(currencies));
+  } catch (error) {
+    console.log(error);
+    dispatch(walletRequestFailed(error.message));
+  }
+};

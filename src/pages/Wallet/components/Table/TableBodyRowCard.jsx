@@ -1,40 +1,56 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { getIdToEdit, deleteExpense } from '../redux/actions';
-import { expensePropTypes } from '../types';
+
+import {
+  getExpenseIdToEdit,
+  deleteExpense,
+  showExpenseForm,
+} from '../../../../redux/actions';
+import { expensePropTypes } from '../../../../types';
 
 class TableBodyRowCard extends Component {
+  handleEdit = (id) => {
+    const { getIdToEditExpense, handleShowForm } = this.props;
+
+    getIdToEditExpense(id);
+    handleShowForm();
+  };
+
   render() {
-    const { expense, getIdToEditExpense, removeExpense } = this.props;
-    const { description, tag, method, value, currency, exchangeRates, id } = expense;
+    const { expense, removeExpense } = this.props;
+
+    const { description, category, payment, value,
+      currency, exchangeRates, id } = expense;
+
+    const fixedValue = Number(value).toFixed(2);
     const currencyName = exchangeRates[currency].name;
     const currencyRate = Number(exchangeRates[currency].ask);
-    const convertedValue = (value * currencyRate).toFixed(2);
     const fixedCurRate = currencyRate.toFixed(2);
-    const fixedValue = Number(value).toFixed(2);
+    const convertedValue = (value * currencyRate).toFixed(2);
+    const { namein } = exchangeRates[currency];
 
     return (
       <tr>
         <td>{description}</td>
-        <td>{tag}</td>
-        <td>{method}</td>
+        <td>{category}</td>
+        <td>{payment}</td>
         <td>{fixedValue}</td>
         <td>{currencyName}</td>
         <td>{fixedCurRate}</td>
         <td>{convertedValue}</td>
-        <td>Real</td>
+        <td>{namein}</td>
         <td>
           <button
             type="button"
-            data-testid="edit-btn"
-            onClick={ () => getIdToEditExpense(id) }
+            className="edit-btn"
+            onClick={ () => this.handleEdit(id) }
           >
             Editar
           </button>
           <button
             type="button"
-            data-testid="delete-btn"
+            className="rmv-btn"
             onClick={ () => removeExpense(id) }
           >
             Excluir
@@ -49,6 +65,7 @@ TableBodyRowCard.propTypes = {
   expense: expensePropTypes.isRequired,
   getIdToEditExpense: PropTypes.func.isRequired,
   removeExpense: PropTypes.func.isRequired,
+  handleShowForm: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = ({ wallet }) => ({
@@ -57,8 +74,9 @@ const mapStateToProps = ({ wallet }) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  getIdToEditExpense: (expenseId) => dispatch(getIdToEdit(expenseId)),
+  getIdToEditExpense: (expenseId) => dispatch(getExpenseIdToEdit(expenseId)),
   removeExpense: (expenseId) => dispatch(deleteExpense(expenseId)),
+  handleShowForm: () => dispatch(showExpenseForm()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(TableBodyRowCard);
